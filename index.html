@@ -1,6 +1,7 @@
 <!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>ساحة العقل | لعبة استراتيجية بخصم بيتعلم</title>
 <style>*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;height:100%;background:#12161d;color:#eee;font-family:system-ui,'Segoe UI',Tahoma,sans-serif;overflow:hidden}
-#menu,#game,#over{position:fixed;inset:0;display:flex;flex-direction:column}#game{display:none}#over{display:none;background:#000c;align-items:center;justify-content:center;z-index:9}
+#menu,#game,#over{position:fixed;inset:0;display:flex;flex-direction:column}#game{display:none}
+@media(max-width:380px){#top{font-size:12px;gap:2px;flex-wrap:wrap}#top button{padding:4px 7px;font-size:14px;min-width:0}#ctl button{padding:8px 6px;font-size:13px}#log{font-size:12px}}#over{display:none;background:#000c;align-items:center;justify-content:center;z-index:9}
 #menu>:first-child{margin-top:auto}#menu>:last-child{margin-bottom:auto}#menu{align-items:center;gap:12px;padding:16px;overflow:auto;background:radial-gradient(circle at 50% 20%,#25314a,#12161d)}
 h1{margin:0;font-size:30px;color:#ffd75a}h2{margin:0;font-size:15px;color:#9bd}.card{background:#1d2535;border-radius:14px;padding:12px 16px;max-width:420px;width:100%;font-size:14px;line-height:1.7}
 button{font-family:inherit;border:0;border-radius:10px;background:#2c3a55;color:#fff;font-size:15px;padding:10px 14px}button:disabled{opacity:.35}
@@ -268,6 +269,7 @@ function startGame(m){const pr=loadProf();const mm=(m&&typeof m=='object'&&m.n)?
  $('objl').textContent=objText(mm);log((mm?'مهمة «'+mm.n+'»: ':'رقم الخريطة '+S.seed+'. ')+'الخصم اختار شخصية «'+AI.pers.name+'». '+(dd>0&&pr.n>0?'وهو مراجع أسلوبك من المباريات اللي فاتت.':'ده أول لقاء بينكم.'));
  resize();ui();if(curMission>=0&&!(mm&&mm.arena)&&localStorage.getItem('sg_tut'))showStory(curMission);if(!localStorage.getItem('sg_tut')){$('tut').style.display='flex'}}
 function log(m){$('log').textContent=m}
+try{new ResizeObserver(()=>{if(S)resize()}).observe(document.getElementById('wrap'))}catch(e){}
 function resize(){const w=$('wrap').clientWidth,h=$('wrap').clientHeight,d=window.devicePixelRatio||1;cell=Math.floor(Math.min(w/W,h/H));
  cv.style.width=cell*W+'px';cv.style.height=cell*H+'px';cv.width=cell*W*d;cv.height=cell*H*d;cx.setTransform(d,0,0,d,0,0)}
 window.addEventListener('resize',()=>{if(S)resize()});
