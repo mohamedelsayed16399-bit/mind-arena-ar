@@ -225,7 +225,7 @@ function beep(f,d,tp){if(mute)return;try{AC=AC||new (window.AudioContext||window
 
 function loadProf(){try{const p=JSON.parse(localStorage.getItem(PK));if(p&&p.comp){if(p.comp.ele===undefined){p.comp.ele=.2;let s=0;for(const t of TYPES)s+=p.comp[t];for(const t of TYPES)p.comp[t]/=s}return p}}catch(e){}return defProfile()}
 function saveProf(p){try{localStorage.setItem(PK,JSON.stringify(p))}catch(e){}}
-const RECR=TYPES.concat(['hero']);const DN=['سهل','عادي','صعب','أسطوري'];
+const RECR=TYPES.concat(['hero']);const DN=['سهل','عادي','صعب','أسطوري','تلقائي'];function effDiff(){if(diff<4)return diff;const r=(loadSt().recent||[]);if(r.length<2)return 1;const x=r.reduce((a,b)=>a+b,0)/r.length;return x<.35?0:x<.6?1:x<.8?2:3}
 function objText(m){if(!m||!m.obj)return 'الهدف: دمّر قلعة الخصم'+(m&&m.weather?(m.weather=='rain'?' | مطر':' | طين'):'');const o=m.obj;return o.type=='survive'?'الهدف: اصمد '+o.n+' دور':o.type=='mines'?'الهدف: سيطر على كل المناجم':'الهدف: اقتل قائد الخصم'}
 function renderCamp(){const c=loadCamp();$('camp').innerHTML=MISSIONS.map((m,i)=>{const open=i==0||c.done[i-1];return (m.ch==2&&!MISSIONS[i-1].ch?'<div class="chh">الفصل الثاني: الأعاصير</div>':i==0?'<div class="chh">الفصل الأول: صعود الخصم</div>':'')+'<button class="ms" data-m="'+i+'"'+(open?'':' disabled')+'>'+(c.done[i]?'⭐':open?'▶️':'🔒')+' '+(i+1)+'. '+m.n+'<small>'+m.d+'</small></button>'}).join('');
  document.querySelectorAll('#camp button').forEach(b=>b.onclick=()=>startGame(MISSIONS[+b.dataset.m]))}
@@ -252,8 +252,8 @@ const MISSIONS=[
  {ch:2,n:'طين النيل',d:'طين: كل الوحدات بتتحرك أبطأ بواحد. جيوش جاهزة من البداية.',weather:'mud',su:[['inf',0],['cav',0],['arc',0],['inf',1],['cav',1],['arc',1]],diff:3,pers:null,fog:false,ag:0,mul:1},
  {ch:2,n:'المعركة الأخيرة',d:'مطر وضباب والنيل، وخصم بيتعلم، وجيوش جاهزة.',weather:'rain',map:'nile',su:[['hero',0],['inf',0],['arc',0],['hero',1],['inf',1],['arc',1]],diff:3,pers:null,fog:true,ag:10,mul:1.1}];
 let curCfg=null,curMission=-1,fogOpt=false,mapOpt='plain';
-function startGame(m){const pr=loadProf();const mm=(m&&typeof m=='object'&&m.n)?m:null;curMission=mm?MISSIONS.indexOf(mm):-1;const dd=mm?mm.diff:diff;const fg=mm?mm.fog:fogOpt;
- S=newGame({mode:mm&&mm.arena?'arena':'normal',seed:mm&&mm.seed,map:mm?mm.map:mapOpt,weather:mm&&mm.weather,obj:mm&&mm.obj,startUnits:mm&&mm.su,fog:fg,aiGold:mm?mm.ag:0,aiIncomeMul:mm?mm.mul:[.85,1,1.1,1.25][diff]});AI=makeAI(S,1,pr,dd,mm&&(mm.ghost||mm.pers)||null);curCfg=mm;startTurn(S,0);if(S.mode=='arena')spawnWave(S);sel=null;mode=null;busy=false;floats=[];aiNotes=[];
+function startGame(m){const pr=loadProf();const mm=(m&&typeof m=='object'&&m.n)?m:null;curMission=mm?MISSIONS.indexOf(mm):-1;const dd=mm?mm.diff:effDiff();const fg=mm?mm.fog:fogOpt;
+ S=newGame({mode:mm&&mm.arena?'arena':'normal',seed:mm&&mm.seed,map:mm?mm.map:mapOpt,weather:mm&&mm.weather,obj:mm&&mm.obj,startUnits:mm&&mm.su,fog:fg,aiGold:mm?mm.ag:0,aiIncomeMul:mm?mm.mul:[.85,1,1.1,1.25][dd]});AI=makeAI(S,1,pr,dd,mm&&(mm.ghost||mm.pers)||null);curCfg=mm;startTurn(S,0);if(S.mode=='arena')spawnWave(S);sel=null;mode=null;busy=false;floats=[];aiNotes=[];
  $('menu').style.display='none';$('over').style.display='none';$('game').style.display='flex';
  $('objl').textContent=objText(mm);log((mm?'مهمة «'+mm.n+'»: ':'')+'الخصم اختار شخصية «'+AI.pers.name+'». '+(dd>0&&pr.n>0?'وهو مراجع أسلوبك من المباريات اللي فاتت.':'ده أول لقاء بينكم.'));
  resize();ui();if(!localStorage.getItem('sg_tut')){$('tut').style.display='flex'}}
@@ -297,7 +297,7 @@ function showPerks(){busy=true;const pool=PERKS.slice();const pick=[];while(pick
 function checkOver(){if(S.over){showOver()}}
 let ST={kills:0,lost:0};
 const SK='sg_stats_v1';function loadSt(){try{return JSON.parse(localStorage.getItem(SK))||{w:0,l:0,streak:0,best:0,daily:{}}}catch(e){return{w:0,l:0,streak:0,best:0,daily:{}}}}
-function recordResult(win){const s=loadSt();if(win){s.w++;s.streak++;s.best=Math.max(s.best,s.streak)}else{s.l++;s.streak=0}if(curCfg&&curCfg.daily){s.daily[curCfg.daily]={won:win,turns:S.turn}}try{localStorage.setItem(SK,JSON.stringify(s))}catch(e){}}
+function recordResult(win){const s=loadSt();s.recent=(s.recent||[]).concat(win?1:0).slice(-6);if(win){s.w++;s.streak++;s.best=Math.max(s.best,s.streak)}else{s.l++;s.streak=0}if(curCfg&&curCfg.daily){s.daily[curCfg.daily]={won:win,turns:S.turn}}try{localStorage.setItem(SK,JSON.stringify(s))}catch(e){}}
 function dateKey(){const d=new Date();return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate()}
 function dailyCfg(){const k=dateKey();const r=mulberry(k);const pk=['rush','turtle','boom','trick'];const wt=[null,'rain','mud'][r()*3|0];const ob=[{type:'hq'},{type:'hq'},{type:'survive',n:18},{type:'mines'}][r()*4|0];
  return{daily:k,seed:k,n:'تحدي اليوم',d:'',diff:2,pers:pk[r()*4|0],fog:r()<.5,map:r()<.5?'nile':'plain',weather:wt,obj:ob.type=='hq'?undefined:ob,ag:5,mul:1.05}}
