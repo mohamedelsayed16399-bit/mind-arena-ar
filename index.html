@@ -11,9 +11,9 @@ button{font-family:inherit;border:0;border-radius:10px;background:#2c3a55;color:
 #ctl{display:flex;padding:4px;gap:6px}#undob{background:#553;font-size:18px;padding:8px 14px}#endb{flex:1;background:#2f8a4a;font-size:17px;font-weight:700}#menub{background:#553}
 #camp{display:flex;flex-direction:column;gap:5px;margin-top:6px}.ms{text-align:right;display:flex;flex-direction:column;font-size:14px}.ms small{color:#9ab;font-size:11px}label{font-size:14px}#tut .card{max-width:340px}.bars{margin-top:6px}.br{display:flex;align-items:center;gap:6px;font-size:11px;height:14px}.br span{width:46px;color:#9ab}.br i{display:block;height:8px;background:#e8a317;border-radius:4px;min-width:2px}.br i.f{background:#4aa3ff}#over .card{text-align:center}</style></head><body>
 <div id="menu"><h1>ساحة العقل</h1><h2>حرب وإدارة ضد خصم بيتعلم أسلوبك وبيتغير كل مباراة</h2>
-<div class="card"><b>الخصم عارف عنك إيه:</b><div id="prof"></div></div>
+<div class="card" id="ghostc" style="display:none;border:2px solid #e8a317"><b>👻 اتحداك صاحبك!</b><br>اللينك ده فيه أسلوب لعب صاحبك. الخصم هيلعب بنفس أسلوبه.<br><button id="ghostb" class="big" style="margin-top:6px;font-size:16px;padding:8px 20px">اتحدّى الشبح</button></div><div class="card" id="stats"></div><div class="card"><button id="dailyb" class="big" style="font-size:16px;padding:8px 20px;width:100%"></button></div><div class="card"><b>الخصم عارف عنك إيه:</b><div id="prof"></div></div>
 <div class="card"><b>الصعوبة</b><div id="dbtns"></div></div>
-<div class="card"><b>🏆 الحملة (١٢ مهمة في فصلين)</b><div id="camp"></div></div><div class="card"><b>مباراة حرة</b><br><label><input type="checkbox" id="fogc"> ضباب الحرب</label> &nbsp; <select id="mapc"><option value="plain">خريطة سهل</option><option value="nile">خريطة النيل</option></select></div><button id="startb" class="big">ابدأ مباراة حرة</button><button id="resetb">مسح ذاكرة الخصم</button>
+<div class="card"><b>🏆 الحملة (١٢ مهمة في فصلين)</b><div id="camp"></div></div><div class="card"><b>مباراة حرة</b><br><label><input type="checkbox" id="fogc"> ضباب الحرب</label> &nbsp; <select id="mapc"><option value="plain">خريطة سهل</option><option value="nile">خريطة النيل</option></select></div><button id="startb" class="big">ابدأ مباراة حرة</button><button id="shareb" style="display:none">🔗 شارك أسلوبي وتحدّى صاحبك</button><button id="resetb">مسح ذاكرة الخصم</button>
 <div class="card" style="font-size:12px">دمّر قلعة الخصم 🏰. جنّد وحدات من القلعة، سيطر على المناجم ⛏️ لزيادة الدخل، وطوّر الاقتصاد والتسليح.<br>المشاة 🛡️ تغلب الفرسان، الفرسان 🐎 تغلب الرماة، الرماة 🏹 تغلب المشاة. المنجنيق 💣 يدمّر القلاع من بعيد لكن هش.</div></div>
 <div id="game"><div id="top"><span>ذهب <b id="gold">0</b> <small id="inc"></small></span><span>الدور <b id="turn"></b></span><span>ذهب الخصم <b id="egold"></b></span><button id="mutb">🔊</button><button id="menub">☰</button></div><div id="ai"></div><div id="objl"></div>
 <div id="wrap"><canvas id="cv"></canvas></div><div id="info"></div><div id="log"></div><div id="rec"></div><div id="ctl"><button id="undob">↩</button><button id="endb">إنهاء الدور ▶</button></div></div>
@@ -105,12 +105,13 @@ function mergeProfile(pr,tr,aiWon,persId){const w=pr.n==0?1:Math.max(.3,1/(pr.n+
 function describe(pr){if(!pr||pr.n==0)return['لسه ما شافكش بتلعب. أول مباراة هيتعلم فيها.'];const L=[];
  const names={inf:'المشاة',arc:'الرماة',cav:'الفرسان',cat:'المنجنيق',ele:'الفيلة'};let best=TYPES.slice().sort((a,b)=>pr.comp[b]-pr.comp[a])[0];
  L.push('وحدتك المفضلة: '+names[best]+' ('+Math.round(pr.comp[best]*100)+'%)');
- const fl=pr.flank.indexOf(Math.max(...pr.flank));L.push('بتهاجم غالبًا من: '+['الجنب الأيمن','النص','الجنب الأيسر'][fl]);
+ const fl=pr.flank.indexOf(Math.max(...pr.flank));L.push('بتهاجم غالبًا من: '+['الجنب الأيسر','النص','الجنب الأيمن'][fl]);
  L.push(pr.contact<9?'بتهاجم بدري (حوالي الدور '+Math.round(pr.contact)+')':pr.contact>16?'بتستنى وتبني الأول':'توقيت هجومك متوسط (الدور '+Math.round(pr.contact)+')');
  L.push(pr.eco>=1.5?'بتستثمر في الاقتصاد بدري':'مش بتركز على الاقتصاد بدري');
  L.push('تحدّيته '+pr.n+' مرة، وفاز عليك '+pr.aiWins+'.');return L}
 // ===== AI =====
-function pickPersona(pr,diff,forceId){if(forceId)return PERS.find(p=>p.id==forceId);
+function ghostPersona(pr){const b={};for(const t of TYPES)b[t]=(pr.comp[t]-.2)*3;const early=pr.contact<9;return{id:'ghost',name:'شبح صاحبك',aggr:early?1.5:.8,caution:early?.7:1.2,econ:Math.min(.9,.15+(pr.eco||0)*.3),bias:b,delay:early?0:6,lanes:pr.flank}}
+function pickPersona(pr,diff,forceId){if(forceId&&typeof forceId=='object')return forceId;if(forceId)return PERS.find(p=>p.id==forceId);
  const ws=PERS.map(p=>{const st=pr.pers[p.id]||{p:0,w:0};let w=diff==0?1:(st.w+1)/(st.p+2)+.15;if(pr.last==p.id)w*=.35;return w});
  let r=Math.random()*ws.reduce((a,b)=>a+b,0);for(let i=0;i<PERS.length;i++){r-=ws[i];if(r<=0)return PERS[i]}return PERS[0]}
 function makeAI(s,p,profile,diff,forceId){const pers=pickPersona(profile,diff,forceId);
@@ -119,7 +120,7 @@ function predShares(s,ctx){const e=1-ctx.p;const b=s.track.builds;const tot=TYPE
  const obs={};for(const t of TYPES)obs[t]=tot>0?b[t]/tot:.2;const pw=ctx.p==1&&prof.n>0?Math.min(.7,.3+.1*prof.n)*ctx.learn:0;const ow=ctx.p==1?(tot>0?Math.min(.8,.2+tot*.07)*ctx.learn:0):0;
  const r={};let sum=0;for(const t of TYPES){r[t]=pw*prof.comp[t]+ow*obs[t]+(1-pw-ow>0?(1-pw-ow)*.2:0);sum+=r[t]}for(const t of TYPES)r[t]/=sum;return r}
 function enemyCounts(s,p){const c={inf:0,arc:0,cav:0,cat:0,ele:0};for(const u of s.units)if(u.o!=p&&c[u.t]!==undefined)c[u.t]++;return c}
-function chooseLane(s,ctx){const prof=ctx.profile;const cols=[1,4,7];
+function chooseLane(s,ctx){const prof=ctx.profile;const cols=[1,4,7];if(ctx.pers.lanes){const f=ctx.pers.lanes;const r=Math.random()*(f[0]+f[1]+f[2]);return cols[r<f[0]?0:r<f[0]+f[1]?1:2]}
  if(ctx.pers.flank){const f=ctx.p==1?prof.flank:[.33,.34,.33];const live=[0,0,0];for(const u of s.units)if(u.o!=ctx.p)live[u.x<3?0:u.x<6?1:2]++;
   let bi=0,bv=1e9;for(let i=0;i<3;i++){const v=f[i]*(ctx.learn?1:0)+live[i]*.15+Math.random()*.15;if(v<bv){bv=v;bi=i}}return cols[bi]}
  return Math.random()<.5?4:cols[Math.random()*3|0]}
@@ -196,7 +197,7 @@ function applyAct(s,act){const ev=[];
   if(tg&&targetsFrom(s,u,u.x,u.y).some(q=>q.k==tg.k&&(tg.k=='h'?q.o==tg.o:q.u===tg.u)))return doAttack(s,u,tg)}}
  return ev}
 // ==/ENGINE==
-if(typeof module!=="undefined")module.exports={newGame,makeAI,aiStep,applyAct,endTurn,startTurn,defProfile,mergeProfile,describe,PERS,T,TYPES,aiScore,reach,targetsFrom};
+if(typeof module!=="undefined")module.exports={ghostPersona,mulberry,newGame,makeAI,aiStep,applyAct,endTurn,startTurn,defProfile,mergeProfile,describe,PERS,T,TYPES,aiScore,reach,targetsFrom};
 // ===== UI =====
 const $=id=>document.getElementById(id);
 const cv=$('cv'),cx=cv.getContext('2d');
@@ -210,8 +211,12 @@ const RECR=TYPES.concat(['hero']);const DN=['سهل','عادي','صعب','أسط
 function objText(m){if(!m||!m.obj)return 'الهدف: دمّر قلعة الخصم'+(m&&m.weather?(m.weather=='rain'?' | مطر':' | طين'):'');const o=m.obj;return o.type=='survive'?'الهدف: اصمد '+o.n+' دور':o.type=='mines'?'الهدف: سيطر على كل المناجم':'الهدف: اقتل قائد الخصم'}
 function renderCamp(){const c=loadCamp();$('camp').innerHTML=MISSIONS.map((m,i)=>{const open=i==0||c.done[i-1];return (m.ch==2&&!MISSIONS[i-1].ch?'<div class="chh">الفصل الثاني: الأعاصير</div>':i==0?'<div class="chh">الفصل الأول: صعود الخصم</div>':'')+'<button class="ms" data-m="'+i+'"'+(open?'':' disabled')+'>'+(c.done[i]?'⭐':open?'▶️':'🔒')+' '+(i+1)+'. '+m.n+'<small>'+m.d+'</small></button>'}).join('');
  document.querySelectorAll('#camp button').forEach(b=>b.onclick=()=>startGame(MISSIONS[+b.dataset.m]))}
-function bars(pr){if(!pr||!pr.n)return'';const nm={inf:'مشاة',arc:'رماة',cav:'فرسان',cat:'منجنيق',ele:'فيلة'};let h='<div class="bars">';for(const t of TYPES)h+='<div class="br"><span>'+nm[t]+'</span><i style="width:'+Math.round(pr.comp[t]*100)+'%"></i></div>';h+='<div class="br"><span>يمين</span><i class="f" style="width:'+Math.round(pr.flank[0]*100)+'%"></i></div><div class="br"><span>نص</span><i class="f" style="width:'+Math.round(pr.flank[1]*100)+'%"></i></div><div class="br"><span>يسار</span><i class="f" style="width:'+Math.round(pr.flank[2]*100)+'%"></i></div></div>';return h}
-function renderMenu(){renderCamp();$('fogc').checked=fogOpt;$('mapc').value=mapOpt;const pr=loadProf();$('prof').innerHTML=describe(pr).map(l=>'<div>• '+l+'</div>').join('')+bars(pr);
+function bars(pr){if(!pr||!pr.n)return'';const nm={inf:'مشاة',arc:'رماة',cav:'فرسان',cat:'منجنيق',ele:'فيلة'};let h='<div class="bars">';for(const t of TYPES)h+='<div class="br"><span>'+nm[t]+'</span><i style="width:'+Math.round(pr.comp[t]*100)+'%"></i></div>';h+='<div class="br"><span>يسار</span><i class="f" style="width:'+Math.round(pr.flank[0]*100)+'%"></i></div><div class="br"><span>نص</span><i class="f" style="width:'+Math.round(pr.flank[1]*100)+'%"></i></div><div class="br"><span>يمين</span><i class="f" style="width:'+Math.round(pr.flank[2]*100)+'%"></i></div></div>';return h}
+function shareLink(){const pr=loadProf();const o={comp:pr.comp,flank:pr.flank,contact:pr.contact,eco:pr.eco,n:pr.n};const code=btoa(unescape(encodeURIComponent(JSON.stringify(o))));return location.origin+location.pathname+'#ghost='+code}
+function getGhost(){const m=location.hash.match(/^#ghost=(.+)$/);if(!m)return null;try{const o=JSON.parse(decodeURIComponent(escape(atob(m[1]))));if(o&&o.comp&&o.flank&&o.flank.length==3){for(const t of TYPES)if(typeof o.comp[t]!='number')o.comp[t]=.2;return o}}catch(e){}return null}
+function renderMenu(){renderCamp();const st=loadSt(),dk=dateKey(),dd0=st.daily[dk];$('stats').innerHTML='انتصارات: <b>'+st.w+'</b> | خسائر: <b>'+st.l+'</b> | سلسلة: <b>'+st.streak+'</b> | أفضل سلسلة: <b>'+st.best+'</b>';
+ $('dailyb').textContent='⚡ تحدي اليوم'+(dd0?(dd0.won?' (اتكسب في '+dd0.turns+' دور)':' (خسرته النهاردة)'):'');$('shareb').style.display=loadProf().n>0?'block':'none';
+ const g=getGhost();$('ghostc').style.display=g?'block':'none';$('fogc').checked=fogOpt;$('mapc').value=mapOpt;const pr=loadProf();$('prof').innerHTML=describe(pr).map(l=>'<div>• '+l+'</div>').join('')+bars(pr);
  $('dbtns').innerHTML=DN.map((n,i)=>'<button class="d'+(i==diff?' on':'')+'" data-d="'+i+'">'+n+'</button>').join('');
  document.querySelectorAll('#dbtns button').forEach(b=>b.onclick=()=>{diff=+b.dataset.d;renderMenu()})}
 const CK='sg_camp_v1';function loadCamp(){try{return JSON.parse(localStorage.getItem(CK))||{done:[]}}catch(e){return{done:[]}}}
@@ -228,9 +233,9 @@ const MISSIONS=[
  {ch:2,n:'اصطياد القائد',d:'اقتل قائد الخصم 👑 (معاه حراس) بضباب.',obj:{type:'hero'},su:[['hero',1],['inf',1],['inf',1],['arc',1]],diff:2,pers:'turtle',fog:true,ag:0,mul:1},
  {ch:2,n:'طين النيل',d:'طين: كل الوحدات بتتحرك أبطأ بواحد. جيوش جاهزة من البداية.',weather:'mud',su:[['inf',0],['cav',0],['arc',0],['inf',1],['cav',1],['arc',1]],diff:3,pers:null,fog:false,ag:0,mul:1},
  {ch:2,n:'المعركة الأخيرة',d:'مطر وضباب والنيل، وخصم بيتعلم، وجيوش جاهزة.',weather:'rain',map:'nile',su:[['hero',0],['inf',0],['arc',0],['hero',1],['inf',1],['arc',1]],diff:3,pers:null,fog:true,ag:10,mul:1.1}];
-let curMission=-1,fogOpt=false,mapOpt='plain';
+let curCfg=null,curMission=-1,fogOpt=false,mapOpt='plain';
 function startGame(m){const pr=loadProf();const mm=(m&&typeof m=='object'&&m.n)?m:null;curMission=mm?MISSIONS.indexOf(mm):-1;const dd=mm?mm.diff:diff;const fg=mm?mm.fog:fogOpt;
- S=newGame({map:mm?mm.map:mapOpt,weather:mm&&mm.weather,obj:mm&&mm.obj,startUnits:mm&&mm.su,fog:fg,aiGold:mm?mm.ag:0,aiIncomeMul:mm?mm.mul:[.85,1,1.1,1.25][diff]});AI=makeAI(S,1,pr,dd,mm&&mm.pers||null);startTurn(S,0);sel=null;mode=null;busy=false;floats=[];aiNotes=[];
+ S=newGame({seed:mm&&mm.seed,map:mm?mm.map:mapOpt,weather:mm&&mm.weather,obj:mm&&mm.obj,startUnits:mm&&mm.su,fog:fg,aiGold:mm?mm.ag:0,aiIncomeMul:mm?mm.mul:[.85,1,1.1,1.25][diff]});AI=makeAI(S,1,pr,dd,mm&&(mm.ghost||mm.pers)||null);curCfg=mm;startTurn(S,0);sel=null;mode=null;busy=false;floats=[];aiNotes=[];
  $('menu').style.display='none';$('over').style.display='none';$('game').style.display='flex';
  $('objl').textContent=objText(mm);log((mm?'مهمة «'+mm.n+'»: ':'')+'الخصم اختار شخصية «'+AI.pers.name+'». '+(dd>0&&pr.n>0?'وهو مراجع أسلوبك من المباريات اللي فاتت.':'ده أول لقاء بينكم.'));
  resize();ui();if(!localStorage.getItem('sg_tut')){$('tut').style.display='flex'}}
@@ -269,7 +274,12 @@ function tap(x,y){if(!S||busy||S.cur!=0||S.over)return;
 function addFloats(ev){if(ev.from&&ev[0]&&vis(ev[0].x,ev[0].y))beams.push({x1:ev.from.x,y1:ev.from.y,x2:ev[0].x,y2:ev[0].y,a:0});for(const e of ev){if(e.t=='💀')shake=8;floats.push({x:e.x,y:e.y,t:e.t,a:0});beep(e.t=='💀'?120:260,.12,'sawtooth')}}
 function checkOver(){if(S.over){showOver()}}
 let ST={kills:0,lost:0};
-function showOver(){const win=S.over.winner==0;const left0=S.units.filter(z=>z.o==0).length;beep(win?880:150,.5,'triangle');const pr=loadProf();mergeProfile(pr,S.track,!win,AI.pers.id);saveProf(pr);
+const SK='sg_stats_v1';function loadSt(){try{return JSON.parse(localStorage.getItem(SK))||{w:0,l:0,streak:0,best:0,daily:{}}}catch(e){return{w:0,l:0,streak:0,best:0,daily:{}}}}
+function recordResult(win){const s=loadSt();if(win){s.w++;s.streak++;s.best=Math.max(s.best,s.streak)}else{s.l++;s.streak=0}if(curCfg&&curCfg.daily){s.daily[curCfg.daily]={won:win,turns:S.turn}}try{localStorage.setItem(SK,JSON.stringify(s))}catch(e){}}
+function dateKey(){const d=new Date();return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate()}
+function dailyCfg(){const k=dateKey();const r=mulberry(k);const pk=['rush','turtle','boom','trick'];const wt=[null,'rain','mud'][r()*3|0];const ob=[{type:'hq'},{type:'hq'},{type:'survive',n:18},{type:'mines'}][r()*4|0];
+ return{daily:k,seed:k,n:'تحدي اليوم',d:'',diff:2,pers:pk[r()*4|0],fog:r()<.5,map:r()<.5?'nile':'plain',weather:wt,obj:ob.type=='hq'?undefined:ob,ag:5,mul:1.05}}
+function showOver(){const win=S.over.winner==0;recordResult(win);const left0=S.units.filter(z=>z.o==0).length;beep(win?880:150,.5,'triangle');const pr=loadProf();mergeProfile(pr,S.track,!win,AI.pers.id);saveProf(pr);
  $('overT').textContent=win?'🏆 كسبت!':'💀 الخصم كسب';$('overD').innerHTML='الأدوار: '+S.turn+' | وحداتك الباقية: '+left0+' | وحدات الخصم الباقية: '+S.units.filter(z=>z.o==1).length+'<br>الخصم كان «'+AI.pers.name+'».'+(S.over.why=='limit'?' (انتهت المباراة بالأدوار)':S.over.why=='survive'?' (صمدت المدة المطلوبة)':S.over.why=='mines'?' (سيطرت على كل المناجم)':S.over.why=='hero'?' (قتلت قائد الخصم)':'')+'<br><b>اللي الخصم اتعلمه عنك:</b><br>'+describe(pr).map(l=>'• '+l).join('<br>');if(curMission>=0&&win){const c=loadCamp();c.done[curMission]=true;try{localStorage.setItem(CK,JSON.stringify(c))}catch(e){};$('overD').innerHTML+='<br>⭐ مهمة «'+MISSIONS[curMission].n+'» اتكملت'}$('over').style.display='flex'}
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function aiTurn(){busy=true;sel=null;mode=null;ui();log('دور الخصم...');await sleep(400);let guard=0;
@@ -328,7 +338,9 @@ function draw(){requestAnimationFrame(draw);if(!S||$('game').style.display=='non
  // day/night tint by turn
  const ph=(S.turn%24)/24;const night=Math.max(0,Math.sin(ph*Math.PI*2-Math.PI/2)*.5+.1);if(night>.05){c.fillStyle='rgba(10,20,60,'+(night*.35)+')';c.fillRect(0,0,cell*W,cell*H)}
  function bar(x,y,w,h,r,col){c.fillStyle='#000a';c.fillRect(x,y,w,h);c.fillStyle=col;c.fillRect(x,y,w*Math.max(0,r),h)}}
-$('tutb').onclick=()=>{$('tut').style.display='none';try{localStorage.setItem('sg_tut','1')}catch(e){}};$('mapc').onchange=()=>{mapOpt=$('mapc').value};$('fogc').onchange=()=>{fogOpt=$('fogc').checked};$('startb').onclick=()=>startGame();$('mutb').onclick=()=>{mute=!mute;$('mutb').textContent=mute?'🔇':'🔊'};$('endb').onclick=playerEnd;$('undob').onclick=undoMove;$('again').onclick=()=>{$('over').style.display='none';$('game').style.display='none';$('menu').style.display='flex';renderMenu()};
+$('tutb').onclick=()=>{$('tut').style.display='none';try{localStorage.setItem('sg_tut','1')}catch(e){}};$('mapc').onchange=()=>{mapOpt=$('mapc').value};$('fogc').onchange=()=>{fogOpt=$('fogc').checked};$('startb').onclick=()=>startGame();$('dailyb').onclick=()=>startGame(dailyCfg());$('shareb').onclick=async()=>{const l=shareLink();try{if(navigator.share){await navigator.share({title:'ساحة العقل',text:'اتحدى الخصم اللي اتدرّب على أسلوبي',url:l})}else{await navigator.clipboard.writeText(l);alert('اللينك اتنسخ، ابعته لصاحبك')}}catch(e){prompt('انسخ اللينك وابعته:',l)}};
+$('ghostb').onclick=()=>{const g=getGhost();if(g)startGame({n:'تحدي الشبح',d:'',diff:2,ghost:ghostPersona(g),fog:false,ag:0,mul:1})};
+$('mutb').onclick=()=>{mute=!mute;$('mutb').textContent=mute?'🔇':'🔊'};$('endb').onclick=playerEnd;$('undob').onclick=undoMove;$('again').onclick=()=>{$('over').style.display='none';$('game').style.display='none';$('menu').style.display='flex';renderMenu()};
 $('resetb').onclick=()=>{if(confirm('تمسح كل اللي الخصم اتعلمه عنك؟')){localStorage.removeItem(PK);renderMenu()}};
 $('menub').onclick=()=>{if(confirm('ترجع للقايمة؟ المباراة دي هتتلغي.')){S=null;$('game').style.display='none';$('menu').style.display='flex';renderMenu()}};
 renderMenu();draw();
