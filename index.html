@@ -255,8 +255,9 @@ function tap(x,y){if(!S||busy||S.cur!=0||S.over)return;
  if(u&&u.o==0){if(canAct(u))selectUnit(u);else log(u.fresh?'الوحدة لسه اتجندت، تتحرك الدور الجاي':'الوحدة خلصت حركتها');ui()}}
 function addFloats(ev){if(ev.from&&ev[0]&&vis(ev[0].x,ev[0].y))beams.push({x1:ev.from.x,y1:ev.from.y,x2:ev[0].x,y2:ev[0].y,a:0});for(const e of ev){if(e.t=='💀')shake=8;floats.push({x:e.x,y:e.y,t:e.t,a:0});beep(e.t=='💀'?120:260,.12,'sawtooth')}}
 function checkOver(){if(S.over){showOver()}}
-function showOver(){const win=S.over.winner==0;beep(win?880:150,.5,'triangle');const pr=loadProf();mergeProfile(pr,S.track,!win,AI.pers.id);saveProf(pr);
- $('overT').textContent=win?'🏆 كسبت!':'💀 الخصم كسب';$('overD').innerHTML='الخصم كان «'+AI.pers.name+'».'+(S.over.why=='limit'?' (انتهت المباراة بالأدوار)':'')+'<br><b>اللي الخصم اتعلمه عنك:</b><br>'+describe(pr).map(l=>'• '+l).join('<br>');if(curMission>=0&&win){const c=loadCamp();c.done[curMission]=true;try{localStorage.setItem(CK,JSON.stringify(c))}catch(e){};$('overD').innerHTML+='<br>⭐ مهمة «'+MISSIONS[curMission].n+'» اتكملت'}$('over').style.display='flex'}
+let ST={kills:0,lost:0};
+function showOver(){const win=S.over.winner==0;const left0=S.units.filter(z=>z.o==0).length;beep(win?880:150,.5,'triangle');const pr=loadProf();mergeProfile(pr,S.track,!win,AI.pers.id);saveProf(pr);
+ $('overT').textContent=win?'🏆 كسبت!':'💀 الخصم كسب';$('overD').innerHTML='الأدوار: '+S.turn+' | وحداتك الباقية: '+left0+' | وحدات الخصم الباقية: '+S.units.filter(z=>z.o==1).length+'<br>الخصم كان «'+AI.pers.name+'».'+(S.over.why=='limit'?' (انتهت المباراة بالأدوار)':'')+'<br><b>اللي الخصم اتعلمه عنك:</b><br>'+describe(pr).map(l=>'• '+l).join('<br>');if(curMission>=0&&win){const c=loadCamp();c.done[curMission]=true;try{localStorage.setItem(CK,JSON.stringify(c))}catch(e){};$('overD').innerHTML+='<br>⭐ مهمة «'+MISSIONS[curMission].n+'» اتكملت'}$('over').style.display='flex'}
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function aiTurn(){busy=true;sel=null;mode=null;ui();log('دور الخصم...');await sleep(400);let guard=0;
  while(S.cur==1&&!S.over&&guard++<200){const act=aiStep(S,AI);if(act.a=='end')break;if(act.a=='skip')continue;
