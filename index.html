@@ -6,7 +6,7 @@ h1{margin:0;font-size:30px;color:#ffd75a}h2{margin:0;font-size:15px;color:#9bd}.
 button{font-family:inherit;border:0;border-radius:10px;background:#2c3a55;color:#fff;font-size:15px;padding:10px 14px}button:disabled{opacity:.35}
 .big{background:#e8a317;color:#111;font-weight:700;font-size:19px;padding:12px 40px}#dbtns{display:flex;gap:6px}.d{flex:1;padding:8px 4px}.d.on{background:#e8a317;color:#111}
 #top{display:flex;justify-content:space-around;align-items:center;padding:6px;background:#1d2535;font-size:15px}#wrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0}canvas{touch-action:none}
-#log{padding:4px 8px;font-size:13px;background:#0e121a;min-height:24px;text-align:center;color:#cfe}#info{text-align:center;font-size:12px;color:#ffe14a;min-height:16px}
+#ai{text-align:center;font-size:12px;background:#241a33;color:#d9b8ff;padding:3px}#log{padding:4px 8px;font-size:13px;background:#0e121a;min-height:24px;text-align:center;color:#cfe}#info{text-align:center;font-size:12px;color:#ffe14a;min-height:16px}
 #rec{display:flex;gap:4px;padding:4px;flex-wrap:nowrap}.rb{flex:1;display:flex;flex-direction:column;align-items:center;padding:4px 2px;font-size:11px;line-height:1.2}.rb span{font-size:20px}.rb small{color:#ffd75a;font-size:12px}.rb.on{background:#3a7f3a}.rb.up{background:#4a3a66}
 #ctl{display:flex;padding:4px;gap:6px}#endb{flex:1;background:#2f8a4a;font-size:17px;font-weight:700}#menub{background:#553}
 #over .card{text-align:center}</style></head><body>
@@ -15,7 +15,7 @@ button{font-family:inherit;border:0;border-radius:10px;background:#2c3a55;color:
 <div class="card"><b>الصعوبة</b><div id="dbtns"></div></div>
 <button id="startb" class="big">ابدأ المعركة</button><button id="resetb">مسح ذاكرة الخصم</button>
 <div class="card" style="font-size:12px">دمّر قلعة الخصم 🏰. جنّد وحدات من القلعة، سيطر على المناجم ⛏️ لزيادة الدخل، وطوّر الاقتصاد والتسليح.<br>المشاة 🛡️ تغلب الفرسان، الفرسان 🐎 تغلب الرماة، الرماة 🏹 تغلب المشاة. المنجنيق 💣 يدمّر القلاع من بعيد لكن هش.</div></div>
-<div id="game"><div id="top"><span>💰 <b id="gold">0</b> <small id="inc"></small></span><span>الدور <b id="turn"></b></span><span>خصم 💰 <b id="egold"></b></span><button id="menub">☰</button></div>
+<div id="game"><div id="top"><span>💰 <b id="gold">0</b> <small id="inc"></small></span><span>الدور <b id="turn"></b></span><span>خصم 💰 <b id="egold"></b></span><button id="mutb">🔊</button><button id="menub">☰</button></div><div id="ai"></div>
 <div id="wrap"><canvas id="cv"></canvas></div><div id="info"></div><div id="log"></div><div id="rec"></div><div id="ctl"><button id="endb">إنهاء الدور ▶</button></div></div>
 <div id="over"><div class="card"><h1 id="overT"></h1><div id="overD"></div><br><button id="again" class="big">رجوع</button></div></div>
 <script>
@@ -38,9 +38,11 @@ function newGame(o){o=o||{};const seed=o.seed||(Math.random()*1e9|0);const r=mul
   income:[1,1],track:{builds:{inf:0,arc:0,cav:0,cat:0},flank:[0,0,0],fs:0,contact:null,ecoBy12:0},log:[]};
  if(o.aiIncomeMul)s.incMul=[1,o.aiIncomeMul]; else s.incMul=[1,1];
  const isMine=(x,y)=>s.mines.some(m=>m.x==x&&m.y==y);
- let n=0,g=0;while(n<11&&g++<200){const x=r()*W|0,y=2+(r()*3|0);if(isMine(x,y)||isMine(W-1-x,H-1-y)||s.obs[x+','+y])continue;
+ let n=0,g=0;while(n<6&&g++<200){const x=r()*W|0,y=2+(r()*3|0);if(isMine(x,y)||isMine(W-1-x,H-1-y)||s.obs[x+','+y])continue;
   s.obs[x+','+y]=1;s.obs[(W-1-x)+','+(H-1-y)]=1;n++}
- return s}
+ ensureOpen(s);return s}
+function ensureOpen(s){const free=(x,y)=>x>=0&&y>=0&&x<W&&y<H&&!s.obs[x+','+y];for(const k of Object.keys(s.obs)){/*check width of passage on each row*/}
+ for(let y=2;y<=8;y++){let open=0;for(let x=0;x<W;x++)if(free(x,y))open++;if(open<5){for(const k of Object.keys(s.obs)){const [ox,oy]=k.split(',').map(Number);if(oy==y){delete s.obs[k];delete s.obs[(W-1-ox)+','+(H-1-oy)];break}}}}}
 const inb=(x,y)=>x>=0&&y>=0&&x<W&&y<H;
 const uAt=(s,x,y)=>s.units.find(u=>u.x==x&&u.y==y);
 const isHQ=(s,x,y)=>s.hq.some(h=>h.x==x&&h.y==y);
@@ -57,7 +59,7 @@ function dmgOf(s,a,tg){const b=BON[a.t][tg.k=='h'?'hq':tg.u.t];return Math.max(1
 function logm(s,m){s.log.push(m);if(s.log.length>60)s.log.shift()}
 function doMove(s,u,x,y){u.x=x;u.y=y;u.moved=true;}
 function canAct(u){return !u.acted&&!u.fresh}
-function doAttack(s,u,tg){const ev=[];const d=dmgOf(s,u,tg);
+function doAttack(s,u,tg){const ev=[];s.lastFight=s.turn;const d=dmgOf(s,u,tg);
  if(u.o==0&&s.track.contact==null)s.track.contact=s.turn;
  if(tg.k=='h'){s.hq[tg.o].hp=Math.max(0,s.hq[tg.o].hp-d);ev.push({x:s.hq[tg.o].x,y:s.hq[tg.o].y,t:'-'+d});if(s.hq[tg.o].hp<=0)s.over={winner:u.o,why:'hq'}}
  else{const e=tg.u;e.hp-=d;ev.push({x:e.x,y:e.y,t:'-'+d});
@@ -122,20 +124,20 @@ function buildType(s,ctx){const pr=ctx.profile,sh=predShares(s,ctx),live=enemyCo
   if(ctx.learn>.4&&pr.contact<9&&s.turn<9&&(a=='inf'||a=='arc'))v+=.35;
   v-=Math.pow(T[a].cost/12,.5)*.3;v+=(Math.random()-.5)*ctx.noise;ws.push(Math.exp(v*(.8+1.5*ctx.learn)))}
  let r=Math.random()*ws.reduce((a,b)=>a+b,0);for(let i=0;i<4;i++){r-=ws[i];if(r<=0)return TYPES[i]}return 'inf'}
-function aiScore(s,ctx,u,x,y,tg,start){const p=ctx.p,eo=1-p,pers=ctx.pers;let sc=0;const push=1+Math.max(0,s.turn-18)/10;
+function aiScore(s,ctx,u,x,y,tg,start){const p=ctx.p,eo=1-p,pers=ctx.pers;let sc=0;const stale=s.turn-(s.lastFight||0)>=7;const push=(1+Math.max(0,s.turn-12)/6)*(stale?2.5:1);
  const dm=tg?dmgOf(s,u,tg):0;
  if(tg){if(tg.k=='h'){sc+=dm*2.4+(s.hq[eo].hp<=dm?200:0)}else{const e=tg.u;const kill=e.hp<=dm;sc+=dm*2+(kill?7+T[e.t].cost/2:0);
   const dist=md(x,y,e.x,e.y),te=T[e.t];if(!kill&&dist>=te.min&&dist<=te.max)sc-=Math.max(1,Math.round(dmgOf(s,e,{k:'u',u})*.6))*1.3}}
  let danger=0;for(const e of s.units){if(e.o==p)continue;const te=T[e.t];const d=md(x,y,e.x,e.y);if(d<=te.mov+te.max&&d>=te.min-te.mov){if(tg&&tg.k=='u'&&tg.u===e&&tg.u.hp<=dm)continue;danger+=dmgOf(s,e,{k:'u',u})*(d<=te.max?.8:.5)}}
  const allies=s.units.filter(a=>a.o==p&&a!==u&&md(a.x,a.y,x,y)<=2).length;
- danger=Math.max(0,danger-allies*1.1);
+ danger=Math.min(Math.max(0,danger-allies*1.1),u.hp*.9);
  const frag=1+(1-u.hp/T[u.t].hp)*.8;let cau=pers.caution*(ctx.learn>.4&&ctx.profile.contact<9&&s.turn<9&&ctx.p==1?1.25:1);if(u.t=='cat'||u.t=='arc')cau*=1.25;
- sc-=danger*.55*cau*frag/push;
+ sc-=danger*.45*cau*frag/push/push;
  for(const m of s.mines){if(m.x==x&&m.y==y){if(m.owner!=p)sc+=m.v+1.5;else sc+=.8}}
  // objective
  const myHQ=s.hq[p],eHQ=s.hq[eo];const late=Math.max(0,Math.min(1,(s.turn-pers.delay)/5+.35));
  const army=s.units.filter(a=>a.o==p).length,enemy=s.units.filter(a=>a.o!=p).length;
- let aggr=push*pers.aggr*late*(army>=enemy?1.1:.7)*(ctx.diff==0?.8:1);
+ let aggr=push*pers.aggr*late*(army>=enemy?1.9:.8)*(ctx.diff==0?.8:1);
  const tx=ctx.lane==null?4:ctx.lane;
  // threats near own base
  let thr=null,td=99;for(const e of s.units){if(e.o==p)continue;const d=md(e.x,e.y,myHQ.x,myHQ.y);if(d<td){td=d;thr=e}}
@@ -161,8 +163,8 @@ function aiStep(s,ctx){const p=ctx.p;if(s.over)return{a:'end'};
  const gold=s.gold[p],mine=s.units.filter(u=>u.o==p);
  if(!ctx.buildDone){
   if(!ctx.upChecked){ctx.upChecked=true;const eco=s.eco[p],tech=s.tech[p];
-   if(eco<3&&gold>=ecoCost(eco)+8&&Math.random()<ctx.pers.econ*(s.turn<14?1:.25)*(ctx.diff==0?.4:1)*(s.turn<2?.5:1)){return{a:'upgrade',k:'eco',note:'الخصم استثمر في الاقتصاد'}}
-   if(tech<3&&s.turn>5&&gold>=techCost(tech)+10&&Math.random()<.3*(ctx.diff==0?.3:1)){return{a:'upgrade',k:'tech',note:'الخصم طوّر التسليح'}}}
+   if(eco<3&&gold>=ecoCost(eco)+8&&(gold>70||Math.random()<ctx.pers.econ*(s.turn<14?1:.25)*(ctx.diff==0?.4:1)*(s.turn<2?.5:1))){return{a:'upgrade',k:'eco',note:'الخصم استثمر في الاقتصاد'}}
+   if(tech<3&&s.turn>5&&gold>=techCost(tech)+10&&(gold>60||Math.random()<.3*(ctx.diff==0?.3:1))){return{a:'upgrade',k:'tech',note:'الخصم طوّر التسليح'}}}
   if(mine.length<CAP&&spawnTiles(s,p).length){let t=buildType(s,ctx);if(gold<T[t].cost){const aff=TYPES.filter(q=>T[q].cost<=gold);if(aff.length&&Math.random()<.6)t=aff[Math.random()*aff.length|0];else t=null}
    if(t){const tl=spawnChoice(s,ctx,t);if(tl){let note='';if(p==1&&ctx.learn>.4&&s.turn>1){const sh=predShares(s,ctx);const top=TYPES.slice().sort((a,b)=>sh[b]-sh[a])[0];const cnt={inf:'المشاة',arc:'الرماة',cav:'الفرسان',cat:'المنجنيق'};
       const ctr={inf:'arc',arc:'cav',cav:'inf',cat:'cav'}[top];if(t==ctr&&ctx.lastNote!=top){ctx.lastNote=top;note='الخصم لاحظ إنك بتعتمد على '+cnt[top]+' وبدأ يجهّز المضاد'}}
@@ -186,12 +188,14 @@ function applyAct(s,act){const ev=[];
   if(tg&&targetsFrom(s,u,u.x,u.y).some(q=>q.k==tg.k&&(tg.k=='h'?q.o==tg.o:q.u===tg.u)))return doAttack(s,u,tg)}}
  return ev}
 // ==/ENGINE==
-if(typeof module!=='undefined')module.exports={newGame,makeAI,aiStep,applyAct,endTurn,startTurn,defProfile,mergeProfile,describe,PERS,T,TYPES};
+if(typeof module!=="undefined")module.exports={newGame,makeAI,aiStep,applyAct,endTurn,startTurn,defProfile,mergeProfile,describe,PERS,T,TYPES,aiScore,reach,targetsFrom};
 // ===== UI =====
 const $=id=>document.getElementById(id);
 const cv=$('cv'),cx=cv.getContext('2d');
 let S=null,AI=null,diff=1,sel=null,mode=null,reachM={},tgts=[],busy=false,floats=[],cell=40,ox=0,oy=0,flash=null,aiNotes=[];
-const PK='sg_profile_v1';
+const PK='sg_profile_v1';let mute=false,AC=null;
+function beep(f,d,tp){if(mute)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=tp||'square';o.frequency.value=f;g.gain.value=.05;o.connect(g);g.connect(AC.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);o.stop(AC.currentTime+d)}catch(e){}}
+
 function loadProf(){try{const p=JSON.parse(localStorage.getItem(PK));if(p&&p.comp)return p}catch(e){}return defProfile()}
 function saveProf(p){try{localStorage.setItem(PK,JSON.stringify(p))}catch(e){}}
 const DN=['سهل','عادي','صعب','أسطوري'];
@@ -212,12 +216,13 @@ function ui(){if(!S)return;const p=0;$('gold').textContent=S.gold[0];$('turn').t
  '<button class="rb up" data-u="tech"'+(S.tech[0]>=3||S.gold[0]<techCost(S.tech[0])||busy?' disabled':'')+'><span>⚔️</span>تسليح '+S.tech[0]+'<small>'+(S.tech[0]>=3?'أقصى':techCost(S.tech[0]))+'</small></button>';
  document.querySelectorAll('#rec button').forEach(b=>b.onclick=()=>{if(busy||S.cur!=0)return;if(b.dataset.t){mode=mode==b.dataset.t?null:b.dataset.t;sel=null;if(mode)log('اختار مكان جنب القلعة لتجنيد '+T[mode].n)}else{if(doUpgrade(S,0,b.dataset.u))log('تم التطوير');}ui()});
  $('endb').disabled=busy||S.cur!=0;
+ const sh=predShares(S,AI);const top=TYPES.slice().sort((a,b)=>sh[b]-sh[a])[0];$('ai').textContent='🧠 '+AI.pers.name+' | الخصم شايفك بتعتمد على: '+T[top].n+' ('+Math.round(sh[top]*100)+'%)';
  const hint=sel?('✔ '+T[sel.t].n+' ❤️'+sel.hp+'/'+T[sel.t].hp):'';$('info').textContent=hint}
 function selectUnit(u){sel=u;mode=null;refreshSel()}
 function refreshSel(){if(!sel){reachM={};tgts=[];return}reachM=(sel.moved)?{}:reach(S,sel);
  if(sel.acted||sel.fresh){reachM={};tgts=[]}else{tgts=targetsFrom(S,sel,sel.x,sel.y)}}
 function tap(x,y){if(!S||busy||S.cur!=0||S.over)return;
- if(mode){if(spawnTiles(S,0).some(q=>q.x==x&&q.y==y)){if(doRecruit(S,0,mode,x,y)){log('جنّدت '+T[mode].n);if(S.gold[0]<T[mode].cost)mode=null}}else mode=null;ui();return}
+ if(mode){if(spawnTiles(S,0).some(q=>q.x==x&&q.y==y)){if(doRecruit(S,0,mode,x,y)){beep(520,.08);log('جنّدت '+T[mode].n);if(S.gold[0]<T[mode].cost)mode=null}}else mode=null;ui();return}
  const u=uAt(S,x,y);
  if(sel){
   const k=x+','+y;
@@ -232,9 +237,9 @@ function tap(x,y){if(!S||busy||S.cur!=0||S.over)return;
   if(u&&u.o==0&&canAct(u)){selectUnit(u);ui();return}
   sel=null;reachM={};tgts=[];ui();return}
  if(u&&u.o==0){if(canAct(u))selectUnit(u);else log(u.fresh?'الوحدة لسه اتجندت، تتحرك الدور الجاي':'الوحدة خلصت حركتها');ui()}}
-function addFloats(ev){for(const e of ev)floats.push({x:e.x,y:e.y,t:e.t,a:0})}
+function addFloats(ev){for(const e of ev){floats.push({x:e.x,y:e.y,t:e.t,a:0});beep(e.t=='💀'?120:260,.12,'sawtooth')}}
 function checkOver(){if(S.over){showOver()}}
-function showOver(){const win=S.over.winner==0;const pr=loadProf();mergeProfile(pr,S.track,!win,AI.pers.id);saveProf(pr);
+function showOver(){const win=S.over.winner==0;beep(win?880:150,.5,'triangle');const pr=loadProf();mergeProfile(pr,S.track,!win,AI.pers.id);saveProf(pr);
  $('overT').textContent=win?'🏆 كسبت!':'💀 الخصم كسب';$('overD').innerHTML='الخصم كان «'+AI.pers.name+'».'+(S.over.why=='limit'?' (انتهت المباراة بالأدوار)':'')+'<br><b>اللي الخصم اتعلمه عنك:</b><br>'+describe(pr).map(l=>'• '+l).join('<br>');$('over').style.display='flex'}
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function aiTurn(){busy=true;sel=null;mode=null;ui();log('دور الخصم...');await sleep(400);let guard=0;
@@ -244,7 +249,7 @@ async function aiTurn(){busy=true;sel=null;mode=null;ui();log('دور الخصم
  if(S.over){checkOver();busy=false;ui();return}
  endTurn(S);busy=false;sel=null;if(S.over){checkOver()}else log('دورك. جنّد وحرّك وحداتك.');ui()}
 function playerEnd(){if(busy||S.cur!=0||S.over)return;endTurn(S);sel=null;mode=null;if(S.over){checkOver();ui();return}ui();aiTurn()}
-cv.addEventListener('pointerdown',e=>{const r=cv.getBoundingClientRect();const x=Math.floor((e.clientX-r.left)/cell),y=Math.floor((e.clientY-r.top)/cell);if(x>=0&&y>=0&&x<W&&y<H)tap(x,y)});
+cv.addEventListener('pointerdown',e=>{const r=cv.getBoundingClientRect();const x=Math.floor((e.clientX-r.left)/cell),y=Math.floor((e.clientY-r.top)/cell);if(x>=0&&y>=0&&x<W&&y<H)tap(x,H-1-y<0?0:y)});
 // flip so player at bottom: HQ y=10 is bottom already (y increases downward)
 function draw(){requestAnimationFrame(draw);if(!S||$('game').style.display=='none')return;const c=cx;c.clearRect(0,0,cell*W,cell*H);
  for(let x=0;x<W;x++)for(let y=0;y<H;y++){c.fillStyle=(x+y)%2?'#3f7d46':'#478a4e';if(y==5)c.fillStyle=(x+y)%2?'#8a7f4a':'#948a52';c.fillRect(x*cell,y*cell,cell,cell);
@@ -261,7 +266,7 @@ function draw(){requestAnimationFrame(draw);if(!S||$('game').style.display=='non
  for(const f of floats){f.a++;c.globalAlpha=Math.max(0,1-f.a/50);c.font='bold '+cell*.45+'px sans-serif';c.fillStyle=f.t=='💀'?'#fff':'#ff4';c.textAlign='center';c.fillText(f.t,f.x*cell+cell/2,f.y*cell+cell*.4-f.a*.6);c.globalAlpha=1}
  floats=floats.filter(f=>f.a<50);
  function bar(x,y,w,h,r,col){c.fillStyle='#000a';c.fillRect(x,y,w,h);c.fillStyle=col;c.fillRect(x,y,w*Math.max(0,r),h)}}
-$('startb').onclick=startGame;$('endb').onclick=playerEnd;$('again').onclick=()=>{$('over').style.display='none';$('game').style.display='none';$('menu').style.display='flex';renderMenu()};
+$('mutb').onclick=()=>{mute=!mute;$('mutb').textContent=mute?'🔇':'🔊'};$('startb').onclick=startGame;$('endb').onclick=playerEnd;$('again').onclick=()=>{$('over').style.display='none';$('game').style.display='none';$('menu').style.display='flex';renderMenu()};
 $('resetb').onclick=()=>{if(confirm('تمسح كل اللي الخصم اتعلمه عنك؟')){localStorage.removeItem(PK);renderMenu()}};
 $('menub').onclick=()=>{if(confirm('ترجع للقايمة؟ المباراة دي هتتلغي.')){S=null;$('game').style.display='none';$('menu').style.display='flex';renderMenu()}};
 renderMenu();draw();
