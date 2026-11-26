@@ -11,13 +11,13 @@ button{font-family:inherit;border:0;border-radius:10px;background:#2c3a55;color:
 #ctl{display:flex;padding:4px;gap:6px}#techb{background:#2d5a6a;font-size:14px}.tc{display:flex;flex-direction:column;text-align:right;margin-top:6px;width:100%}.tc small{color:#9ab;font-size:11px}#undob{background:#553;font-size:18px;padding:8px 14px}#endb{flex:1;background:#2f8a4a;font-size:17px;font-weight:700}#menub{background:#553}
 #camp{display:flex;flex-direction:column;gap:5px;margin-top:6px}.ms{text-align:right;display:flex;flex-direction:column;font-size:14px}.ms small{color:#9ab;font-size:11px}label{font-size:14px}#tut .card{max-width:340px}.bars{margin-top:6px}.br{display:flex;align-items:center;gap:6px;font-size:11px;height:14px}.br span{width:46px;color:#9ab}.br i{display:block;height:8px;background:#e8a317;border-radius:4px;min-width:2px}.br i.f{background:#4aa3ff}#over .card{text-align:center}</style></head><body>
 <div id="menu"><h1>ساحة العقل</h1><h2>حرب وإدارة ضد خصم بيتعلم أسلوبك وبيتغير كل مباراة</h2>
-<div class="card" id="ghostc" style="display:none;border:2px solid #e8a317"><b>👻 اتحداك صاحبك!</b><br>اللينك ده فيه أسلوب لعب صاحبك. الخصم هيلعب بنفس أسلوبه.<br><button id="ghostb" class="big" style="margin-top:6px;font-size:16px;padding:8px 20px">اتحدّى الشبح</button></div><div class="card" id="stats"></div><div class="card"><button id="dailyb" class="big" style="font-size:16px;padding:8px 20px;width:100%"></button></div><div class="card"><b>الخصم عارف عنك إيه:</b><div id="prof"></div></div>
+<div class="card" id="ghostc" style="display:none;border:2px solid #e8a317"><b>👻 اتحداك صاحبك!</b><br>اللينك ده فيه أسلوب لعب صاحبك. الخصم هيلعب بنفس أسلوبه.<br><button id="ghostb" class="big" style="margin-top:6px;font-size:16px;padding:8px 20px">اتحدّى الشبح</button></div><div class="card" id="stats"></div><div class="card"><button id="arenab" class="big" style="font-size:15px;padding:8px 14px;width:100%;margin-bottom:6px"></button><button id="dailyb" class="big" style="font-size:16px;padding:8px 20px;width:100%"></button></div><div class="card"><b>الخصم عارف عنك إيه:</b><div id="prof"></div></div>
 <div class="card"><b>الصعوبة</b><div id="dbtns"></div></div>
 <div class="card"><b>🏆 الحملة (١٢ مهمة في فصلين)</b><div id="camp"></div></div><div class="card"><b>مباراة حرة</b><br><label><input type="checkbox" id="fogc"> ضباب الحرب</label> &nbsp; <select id="mapc"><option value="plain">خريطة سهل</option><option value="nile">خريطة النيل</option></select></div><button id="startb" class="big">ابدأ مباراة حرة</button><button id="shareb" style="display:none">🔗 شارك أسلوبي وتحدّى صاحبك</button><button id="resetb">مسح ذاكرة الخصم</button>
 <div class="card" style="font-size:12px">دمّر قلعة الخصم 🏰. جنّد وحدات من القلعة، سيطر على المناجم ⛏️ لزيادة الدخل، وطوّر الاقتصاد والتسليح.<br>المشاة 🛡️ تغلب الفرسان، الفرسان 🐎 تغلب الرماة، الرماة 🏹 تغلب المشاة. المنجنيق 💣 يدمّر القلاع من بعيد لكن هش.</div></div>
 <div id="game"><div id="top"><span>ذهب <b id="gold">0</b> <small id="inc"></small></span><span>الدور <b id="turn"></b></span><span>ذهب الخصم <b id="egold"></b></span><button id="mutb">🔊</button><button id="menub">☰</button></div><div id="ai"></div><div id="objl"></div>
 <div id="wrap"><canvas id="cv"></canvas></div><div id="info"></div><div id="log"></div><div id="rec"></div><div id="ctl"><button id="techb">تقنيات</button><button id="undob">↩</button><button id="endb">إنهاء الدور ▶</button></div></div>
-<div id="tut" style="position:fixed;inset:0;display:none;background:#000d;z-index:10;align-items:center;justify-content:center"><div class="card"><b>إزاي تلعب</b><br>١. اضغط وحدة تجنيد تحت، واضغط مكان أخضر جنب قلعتك 🏰.<br>٢. اضغط وحدتك لتشوف مكان الحركة (أزرق)، واضغط المكان.<br>٣. اضغط على عدو جوه المدى (إطار أحمر) تهاجمه.<br>٤. وحدة جديدة مبتتحركش في نفس الدور. المناجم ⛏️ بتدّيك ذهب لو وقفت عليها.<br>٥. دمّر قلعة الخصم قبل ما يدمّر قلعتك.<br>الخصم بيراقب أسلوبك وهيحاول يضادّك.<br><br><button id="tutb" class="big">فهمت</button></div></div><div id="techp" style="position:fixed;inset:0;display:none;background:#000d;z-index:10;align-items:center;justify-content:center"><div class="card"><b>شجرة التقنيات</b><div id="techl"></div><br><button id="techx" class="big" style="font-size:16px;padding:8px 30px">إغلاق</button></div></div><div id="over"><div class="card"><h1 id="overT"></h1><div id="overD"></div><br><button id="again" class="big">رجوع</button></div></div>
+<div id="tut" style="position:fixed;inset:0;display:none;background:#000d;z-index:10;align-items:center;justify-content:center"><div class="card"><b>إزاي تلعب</b><br>١. اضغط وحدة تجنيد تحت، واضغط مكان أخضر جنب قلعتك 🏰.<br>٢. اضغط وحدتك لتشوف مكان الحركة (أزرق)، واضغط المكان.<br>٣. اضغط على عدو جوه المدى (إطار أحمر) تهاجمه.<br>٤. وحدة جديدة مبتتحركش في نفس الدور. المناجم ⛏️ بتدّيك ذهب لو وقفت عليها.<br>٥. دمّر قلعة الخصم قبل ما يدمّر قلعتك.<br>الخصم بيراقب أسلوبك وهيحاول يضادّك.<br><br><button id="tutb" class="big">فهمت</button></div></div><div id="techp" style="position:fixed;inset:0;display:none;background:#000d;z-index:10;align-items:center;justify-content:center"><div class="card"><b>شجرة التقنيات</b><div id="techl"></div><br><button id="techx" class="big" style="font-size:16px;padding:8px 30px">إغلاق</button></div></div><div id="perkp" style="position:fixed;inset:0;display:none;background:#000d;z-index:10;align-items:center;justify-content:center"><div class="card"><b id="perkw"></b><br>اختار مكافأة:<div id="perkl"></div></div></div><div id="over"><div class="card"><h1 id="overT"></h1><div id="overD"></div><br><button id="again" class="big">رجوع</button></div></div>
 <script>
 // ==ENGINE==
 const W=9,H=11;
@@ -37,7 +37,7 @@ const md=(a,b,c,d)=>Math.abs(a-c)+Math.abs(b-d);
 function newGame(o){o=o||{};const seed=o.seed||(Math.random()*1e9|0);const r=mulberry(seed);
  const s={river:{},seed,turn:1,cur:0,gold:[30,30+(o.aiGold||0)],eco:[0,0],tech:[0,0],units:[],uid:1,over:null,
   hq:[{x:4,y:10,hp:HQHP},{x:4,y:0,hp:HQHP}],mines:MINEDEF.map(m=>({x:m[0],y:m[1],v:m[2],owner:-1})),obs:{},
-  income:[1,1],hqMax:[HQHP,HQHP],techs:[{},{}],fx:[],fog:!!o.fog,obj:o.obj||{type:'hq'},weather:o.weather||null,forest:{},track:{builds:{inf:0,arc:0,cav:0,cat:0,ele:0},flank:[0,0,0],fs:0,contact:null,ecoBy12:0},log:[]};
+  income:[1,1],mode:o.mode||'normal',wave:0,waveActive:false,hqMax:[HQHP,HQHP],techs:[{},{}],fx:[],fog:!!o.fog,obj:o.obj||{type:'hq'},weather:o.weather||null,forest:{},track:{builds:{inf:0,arc:0,cav:0,cat:0,ele:0},flank:[0,0,0],fs:0,contact:null,ecoBy12:0},log:[]};
  if(o.aiIncomeMul)s.incMul=[1,o.aiIncomeMul]; else s.incMul=[1,1];
  const isMine=(x,y)=>s.mines.some(m=>m.x==x&&m.y==y);
  let n=0,g=0;while(n<6&&g++<200){const x=r()*W|0,y=2+(r()*3|0);if(isMine(x,y)||isMine(W-1-x,H-1-y)||s.obs[x+','+y])continue;
@@ -60,7 +60,7 @@ function reach(s,u){const R={};const key=(x,y)=>x+','+y;const q=[[u.x,u.y,0]];co
  R[key(u.x,u.y)]=0;return R}
 function targetsFrom(s,u,x,y){const out=[];const t=Object.assign({},T[u.t]);if(s.weather=='rain'&&(u.t=='arc'||u.t=='cat'))t.max=Math.max(t.min,t.max-1);
  for(const e of s.units){if(e.o==u.o)continue;const d=md(x,y,e.x,e.y);if(d>=t.min&&d<=t.max)out.push({k:'u',u:e})}
- const eo=1-u.o,h=s.hq[eo];const d=md(x,y,h.x,h.y);if(h.hp>0&&d>=t.min&&d<=t.max)out.push({k:'h',o:eo});return out}
+ const eo=1-u.o,h=s.hq[eo];const d=md(x,y,h.x,h.y);if(h.hp>0&&d>=t.min&&d<=t.max&&!(s.mode=='arena'&&eo==1))out.push({k:'h',o:eo});return out}
 function dmgOf(s,a,tg){const b=BON[a.t][tg.k=='h'?'hq':tg.u.t];const fm=(tg.k=='u'&&s.forest[tg.u.x+','+tg.u.y])?.72:1;return Math.max(1,Math.round(T[a.t].atk*b*(1+.25*s.tech[a.o])*fm))}
 function logm(s,m){s.log.push(m);if(s.log.length>60)s.log.shift()}
 function doMove(s,u,x,y){u.x=x;u.y=y;u.moved=true;}
@@ -93,7 +93,7 @@ function endTurn(s){if(s.over)return;
  if(s.techs[s.cur].castle){const h=s.hq[s.cur];const tg=s.units.filter(z=>z.o!=s.cur&&md(z.x,z.y,h.x,h.y)<=2).sort((a,b)=>a.hp-b.hp)[0];if(tg){tg.hp-=3;s.fx.push({x:tg.x,y:tg.y,t:'-3'});if(tg.hp<=0){s.units=s.units.filter(z=>z!==tg);s.fx.push({x:tg.x,y:tg.y,t:'💀'})}}}
  if(s.obj.type=='mines'&&s.cur==0&&s.mines.every(m=>m.owner==0)){s.over={winner:0,why:'mines'};return}
  s.cur=1-s.cur;if(s.cur==0){s.turn++;if(s.obj.type=='survive'&&s.turn>s.obj.n){s.over={winner:0,why:'survive'};return}
-  if(s.turn>TURNLIMIT){const sc=p=>s.hq[p].hp*2+s.units.filter(u=>u.o==p).reduce((a,u)=>a+T[u.t].cost*u.hp/T[u.t].hp,0);const a=sc(0),b=sc(1);s.over={winner:a>=b?0:1,why:'limit'};return}}
+  if(s.mode!='arena'&&s.turn>TURNLIMIT){const sc=p=>s.hq[p].hp*2+s.units.filter(u=>u.o==p).reduce((a,u)=>a+T[u.t].cost*u.hp/T[u.t].hp,0);const a=sc(0),b=sc(1);s.over={winner:a>=b?0:1,why:'limit'};return}}
  startTurn(s,s.cur)}
 // ===== profile / learning =====
 const PERS=[
@@ -175,6 +175,7 @@ function aiStep(s,ctx){const p=ctx.p;if(s.over)return{a:'end'};
  if(ctx.pendingNote){const n=ctx.pendingNote;ctx.pendingNote=null;return{a:'skip',note:n}}
  if(ctx.queue.length)return ctx.queue.shift();
  const gold=s.gold[p],mine=s.units.filter(u=>u.o==p);
+ if(s.mode=='arena'&&p==1)ctx.buildDone=true;
  if(!ctx.buildDone){
   if(!ctx.upChecked){ctx.upChecked=true;const eco=s.eco[p],tech=s.tech[p];
    if(eco<3&&gold>=ecoCost(eco)+8&&(gold>70||Math.random()<ctx.pers.econ*(s.turn<14?1:.25)*(ctx.diff==0?.4:1)*(s.turn<2?.5:1))){return{a:'upgrade',k:'eco',note:'الخصم استثمر في الاقتصاد'}}
@@ -195,6 +196,14 @@ function aiStep(s,ctx){const p=ctx.p;if(s.over)return{a:'end'};
  if(best.tg)ctx.queue.push({a:'attack',id:u.id,tg:best.tg.k=='h'?{k:'h',o:best.tg.o}:{k:'u',id:best.tg.u.id}});
  if(best.moved)return{a:'move',id:u.id,x:best.x,y:best.y};
  if(ctx.queue.length)return ctx.queue.shift();return{a:'skip'}}
+function spawnWave(s){s.wave++;const n=3+Math.floor(s.wave*1.5);const pool=s.wave<3?['inf','arc','cav']:s.wave<6?['inf','arc','cav','cat']:['inf','arc','cav','cat','ele'];
+ s.tech[1]=Math.min(4,Math.floor((s.wave-1)/3));let placed=0;const cand=[];for(let y=0;y<=2;y++)for(let x=0;x<W;x++)if(!s.obs[x+','+y]&&!(s.hq[1].x==x&&s.hq[1].y==y))cand.push({x,y});
+ for(let i=cand.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[cand[i],cand[j]]=[cand[j],cand[i]]}
+ for(const q of cand){if(placed>=n)break;if(uAt(s,q.x,q.y))continue;const t=pool[Math.random()*pool.length|0];s.units.push({id:s.uid++,t,o:1,x:q.x,y:q.y,hp:T[t].hp,moved:false,acted:false,fresh:false});placed++}
+ if(s.wave>=4&&s.wave%4==0&&!s.units.some(u=>u.o==1&&u.t=='hero')){const q=cand.find(c=>!uAt(s,c.x,c.y));if(q)s.units.push({id:s.uid++,t:'hero',o:1,x:q.x,y:q.y,hp:T.hero.hp,moved:false,acted:false,fresh:false})}
+ s.waveActive=true;return placed}
+function waveCleared(s){if(s.mode=='arena'&&s.waveActive&&!s.units.some(u=>u.o==1)){s.waveActive=false;return true}return false}
+const PERKS=[{id:'atk',n:'سلاح أقوى',d:'+٢٥٪ ضرر لكل وحداتك',f:s=>{s.tech[0]=Math.min(8,s.tech[0]+1)}},{id:'heal',n:'تجديد الجيش',d:'علاج كل وحداتك وقلعتك +١٠',f:s=>{for(const u of s.units)if(u.o==0)u.hp=T[u.t].hp;s.hq[0].hp=Math.min(s.hqMax[0],s.hq[0].hp+10)}},{id:'gold',n:'كنز',d:'+٦٠ ذهب',f:s=>{s.gold[0]+=60}},{id:'eco',n:'تجارة',d:'+١ مستوى اقتصاد',f:s=>{s.eco[0]=Math.min(6,s.eco[0]+1)}},{id:'castle',n:'أسوار',d:'القلعة +١٥ وبتضرب الأعداء',f:s=>{if(!s.techs[0].castle){s.techs[0].castle=true;s.hqMax[0]+=15;s.hq[0].hp+=15}else{s.hqMax[0]+=15;s.hq[0].hp+=15}}},{id:'hero',n:'قائد جديد',d:'قائد مجاني (لو مفيش)',f:s=>{if(!s.units.some(u=>u.o==0&&u.t=='hero')){const ts=spawnTiles(s,0);if(ts[0])s.units.push({id:s.uid++,t:'hero',o:0,x:ts[0].x,y:ts[0].y,hp:T.hero.hp,moved:false,acted:false,fresh:false})}else s.gold[0]+=40}},{id:'ele',n:'فيل حربي',d:'فيل مجاني',f:s=>{const ts=spawnTiles(s,0);if(ts[0])s.units.push({id:s.uid++,t:'ele',o:0,x:ts[0].x,y:ts[0].y,hp:T.ele.hp,moved:false,acted:false,fresh:false});else s.gold[0]+=25}},{id:'forge',n:'مصنع',d:'تجنيد أرخص ١٥٪',f:s=>{s.techs[0].forge=true}}];
 function applyAct(s,act){const ev=[];
  if(act.a=='recruit')doRecruit(s,s.cur,act.t,act.x,act.y);
  else if(act.a=='upgrade')doUpgrade(s,s.cur,act.k);
@@ -204,7 +213,7 @@ function applyAct(s,act){const ev=[];
   if(tg&&targetsFrom(s,u,u.x,u.y).some(q=>q.k==tg.k&&(tg.k=='h'?q.o==tg.o:q.u===tg.u)))return doAttack(s,u,tg)}}
  return ev}
 // ==/ENGINE==
-if(typeof module!=="undefined")module.exports={TECH,doTech,costOf,ghostPersona,mulberry,newGame,makeAI,aiStep,applyAct,endTurn,startTurn,defProfile,mergeProfile,describe,PERS,T,TYPES,aiScore,reach,targetsFrom};
+if(typeof module!=="undefined")module.exports={spawnWave,waveCleared,PERKS,TECH,doTech,costOf,ghostPersona,mulberry,newGame,makeAI,aiStep,applyAct,endTurn,startTurn,defProfile,mergeProfile,describe,PERS,T,TYPES,aiScore,reach,targetsFrom};
 // ===== UI =====
 const $=id=>document.getElementById(id);
 const cv=$('cv'),cx=cv.getContext('2d');
@@ -222,7 +231,7 @@ function bars(pr){if(!pr||!pr.n)return'';const nm={inf:'مشاة',arc:'رماة'
 function shareLink(){const pr=loadProf();const o={comp:pr.comp,flank:pr.flank,contact:pr.contact,eco:pr.eco,n:pr.n};const code=btoa(unescape(encodeURIComponent(JSON.stringify(o))));return location.origin+location.pathname+'#ghost='+code}
 function getGhost(){const m=location.hash.match(/^#ghost=(.+)$/);if(!m)return null;try{const o=JSON.parse(decodeURIComponent(escape(atob(m[1]))));if(o&&o.comp&&o.flank&&o.flank.length==3){for(const t of TYPES)if(typeof o.comp[t]!='number')o.comp[t]=.2;return o}}catch(e){}return null}
 function renderMenu(){renderCamp();const st=loadSt(),dk=dateKey(),dd0=st.daily[dk];$('stats').innerHTML='انتصارات: <b>'+st.w+'</b> | خسائر: <b>'+st.l+'</b> | سلسلة: <b>'+st.streak+'</b> | أفضل سلسلة: <b>'+st.best+'</b>';
- $('dailyb').textContent='⚡ تحدي اليوم'+(dd0?(dd0.won?' (اتكسب في '+dd0.turns+' دور)':' (خسرته النهاردة)'):'');$('shareb').style.display=loadProf().n>0?'block':'none';
+ $('dailyb').textContent='⚡ تحدي اليوم'+(dd0?(dd0.won?' (اتكسب في '+dd0.turns+' دور)':' (خسرته النهاردة)'):'');$('arenab').textContent='ساحة البقاء: موجات لا نهائية'+(st.arena?' (أفضل موجة '+(st.arena+1)+')':'');$('shareb').style.display=loadProf().n>0?'block':'none';
  const g=getGhost();$('ghostc').style.display=g?'block':'none';$('fogc').checked=fogOpt;$('mapc').value=mapOpt;const pr=loadProf();$('prof').innerHTML=describe(pr).map(l=>'<div>• '+l+'</div>').join('')+bars(pr);
  $('dbtns').innerHTML=DN.map((n,i)=>'<button class="d'+(i==diff?' on':'')+'" data-d="'+i+'">'+n+'</button>').join('');
  document.querySelectorAll('#dbtns button').forEach(b=>b.onclick=()=>{diff=+b.dataset.d;renderMenu()})}
@@ -242,7 +251,7 @@ const MISSIONS=[
  {ch:2,n:'المعركة الأخيرة',d:'مطر وضباب والنيل، وخصم بيتعلم، وجيوش جاهزة.',weather:'rain',map:'nile',su:[['hero',0],['inf',0],['arc',0],['hero',1],['inf',1],['arc',1]],diff:3,pers:null,fog:true,ag:10,mul:1.1}];
 let curCfg=null,curMission=-1,fogOpt=false,mapOpt='plain';
 function startGame(m){const pr=loadProf();const mm=(m&&typeof m=='object'&&m.n)?m:null;curMission=mm?MISSIONS.indexOf(mm):-1;const dd=mm?mm.diff:diff;const fg=mm?mm.fog:fogOpt;
- S=newGame({seed:mm&&mm.seed,map:mm?mm.map:mapOpt,weather:mm&&mm.weather,obj:mm&&mm.obj,startUnits:mm&&mm.su,fog:fg,aiGold:mm?mm.ag:0,aiIncomeMul:mm?mm.mul:[.85,1,1.1,1.25][diff]});AI=makeAI(S,1,pr,dd,mm&&(mm.ghost||mm.pers)||null);curCfg=mm;startTurn(S,0);sel=null;mode=null;busy=false;floats=[];aiNotes=[];
+ S=newGame({mode:mm&&mm.arena?'arena':'normal',seed:mm&&mm.seed,map:mm?mm.map:mapOpt,weather:mm&&mm.weather,obj:mm&&mm.obj,startUnits:mm&&mm.su,fog:fg,aiGold:mm?mm.ag:0,aiIncomeMul:mm?mm.mul:[.85,1,1.1,1.25][diff]});AI=makeAI(S,1,pr,dd,mm&&(mm.ghost||mm.pers)||null);curCfg=mm;startTurn(S,0);if(S.mode=='arena')spawnWave(S);sel=null;mode=null;busy=false;floats=[];aiNotes=[];
  $('menu').style.display='none';$('over').style.display='none';$('game').style.display='flex';
  $('objl').textContent=objText(mm);log((mm?'مهمة «'+mm.n+'»: ':'')+'الخصم اختار شخصية «'+AI.pers.name+'». '+(dd>0&&pr.n>0?'وهو مراجع أسلوبك من المباريات اللي فاتت.':'ده أول لقاء بينكم.'));
  resize();ui();if(!localStorage.getItem('sg_tut')){$('tut').style.display='flex'}}
@@ -250,7 +259,7 @@ function log(m){$('log').textContent=m}
 function resize(){const w=$('wrap').clientWidth,h=$('wrap').clientHeight,d=window.devicePixelRatio||1;cell=Math.floor(Math.min(w/W,h/H));
  cv.style.width=cell*W+'px';cv.style.height=cell*H+'px';cv.width=cell*W*d;cv.height=cell*H*d;cx.setTransform(d,0,0,d,0,0)}
 window.addEventListener('resize',()=>{if(S)resize()});
-function ui(){if(!S)return;const p=0;$('gold').textContent=S.gold[0];$('turn').textContent=S.turn+'/'+TURNLIMIT;$('inc').textContent='+'+incomeOf(S,0);$('egold').textContent=S.gold[1];
+function ui(){if(!S)return;if(S.mode=='arena')$('objl').textContent='ساحة البقاء | الموجة '+S.wave+' | الأعداء: '+S.units.filter(z=>z.o==1).length;const p=0;$('gold').textContent=S.gold[0];$('turn').textContent=S.turn+'/'+TURNLIMIT;$('inc').textContent='+'+incomeOf(S,0);$('egold').textContent=S.gold[1];
  $('rec').innerHTML=RECR.map(t=>'<button class="rb'+(mode==t?' on':'')+'" data-t="'+t+'"'+(S.gold[0]<costOf(S,0,t)||S.cur!=0||busy||(t=='hero'&&S.units.some(z=>z.o==0&&z.t=='hero'))?' disabled':'')+'><img src="'+icon(t,'#1d5fa8')+'" width=26 height=26>'+T[t].n+'<small>'+costOf(S,0,t)+'</small></button>').join('')+
  '<button class="rb up" data-u="eco"'+(S.eco[0]>=4||S.gold[0]<ecoCost(S.eco[0])||busy?' disabled':'')+'><img src="'+icon('eco','')+'" width=26 height=26>اقتصاد '+S.eco[0]+'<small>'+(S.eco[0]>=4?'أقصى':ecoCost(S.eco[0]))+'</small></button>'+
  '<button class="rb up" data-u="tech"'+(S.tech[0]>=3||S.gold[0]<techCost(S.tech[0])||busy?' disabled':'')+'><img src="'+icon('tech','#6a4a99')+'" width=26 height=26>تسليح '+S.tech[0]+'<small>'+(S.tech[0]>=3?'أقصى':techCost(S.tech[0]))+'</small></button>';
@@ -272,13 +281,17 @@ function tap(x,y){if(!S||busy||S.cur!=0||S.over)return;
    let ok=tgts.some(q=>q.k==tg.k&&(tg.k=='h'||q.u===tg.u));
    if(!ok&&!sel.moved&&sel.t!='cat'&&!sel.acted&&!sel.fresh){let bk=null,bc=99;for(const kk in reachM){const [rx,ry]=kk.split(',').map(Number);if(targetsFrom(S,sel,rx,ry).some(q=>q.k==tg.k&&(tg.k=='h'||q.u===tg.u))&&reachM[kk]<bc){bc=reachM[kk];bk=[rx,ry]}}
     if(bk){doMove(S,sel,bk[0],bk[1]);ok=true}}
-   if(ok){lastMove=null;const ev=doAttack(S,sel,tg);addFloats(ev);ev.forEach(e=>{if(e.t=='💀')log('وحدة اتدمرت!')});const was=sel;sel=null;reachM={};tgts=[];checkOver();ui();return}
+   if(ok){lastMove=null;const ev=doAttack(S,sel,tg);addFloats(ev);ev.forEach(e=>{if(e.t=='💀')log('وحدة اتدمرت!')});const was=sel;sel=null;reachM={};tgts=[];checkOver();afterAction();ui();return}
    log('الهدف بعيد عن مدى الوحدة');return}
   if(reachM[k]!==undefined&&!u&&!isHQ(S,x,y)){lastMove={id:sel.id,x:sel.x,y:sel.y};doMove(S,sel,x,y);refreshSel();ui();return}
   if(u&&u.o==0&&canAct(u)){selectUnit(u);ui();return}
   sel=null;reachM={};tgts=[];ui();return}
  if(u&&u.o==0){if(canAct(u))selectUnit(u);else log(u.fresh?'الوحدة لسه اتجندت، تتحرك الدور الجاي':'الوحدة خلصت حركتها');ui()}}
 function addFloats(ev){if(ev.from&&ev[0]&&vis(ev[0].x,ev[0].y))beams.push({x1:ev.from.x,y1:ev.from.y,x2:ev[0].x,y2:ev[0].y,a:0});for(const e of ev){if(e.t=='💀')shake=8;floats.push({x:e.x,y:e.y,t:e.t,a:0});beep(e.t=='💀'?120:260,.12,'sawtooth')}}
+function afterAction(){if(S&&!S.over&&waveCleared(S)){showPerks();return true}return false}
+function showPerks(){busy=true;const pool=PERKS.slice();const pick=[];while(pick.length<3&&pool.length)pick.push(pool.splice(Math.random()*pool.length|0,1)[0]);
+ $('perkw').textContent='الموجة '+S.wave+' اتهزمت!';$('perkl').innerHTML=pick.map(p=>'<button class="tc" data-i="'+p.id+'"><b>'+p.n+'</b><small>'+p.d+'</small></button>').join('');
+ document.querySelectorAll('#perkl button').forEach(b=>b.onclick=()=>{const p=PERKS.find(z=>z.id==b.dataset.i);p.f(S);$('perkp').style.display='none';spawnWave(S);log('الموجة '+S.wave+' ظهرت');busy=false;sel=null;ui();if(S.cur==1)aiTurn()});$('perkp').style.display='flex'}
 function checkOver(){if(S.over){showOver()}}
 let ST={kills:0,lost:0};
 const SK='sg_stats_v1';function loadSt(){try{return JSON.parse(localStorage.getItem(SK))||{w:0,l:0,streak:0,best:0,daily:{}}}catch(e){return{w:0,l:0,streak:0,best:0,daily:{}}}}
@@ -286,7 +299,7 @@ function recordResult(win){const s=loadSt();if(win){s.w++;s.streak++;s.best=Math
 function dateKey(){const d=new Date();return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate()}
 function dailyCfg(){const k=dateKey();const r=mulberry(k);const pk=['rush','turtle','boom','trick'];const wt=[null,'rain','mud'][r()*3|0];const ob=[{type:'hq'},{type:'hq'},{type:'survive',n:18},{type:'mines'}][r()*4|0];
  return{daily:k,seed:k,n:'تحدي اليوم',d:'',diff:2,pers:pk[r()*4|0],fog:r()<.5,map:r()<.5?'nile':'plain',weather:wt,obj:ob.type=='hq'?undefined:ob,ag:5,mul:1.05}}
-function showOver(){const win=S.over.winner==0;recordResult(win);const left0=S.units.filter(z=>z.o==0).length;beep(win?880:150,.5,'triangle');const pr=loadProf();mergeProfile(pr,S.track,!win,AI.pers.id);saveProf(pr);
+function showOver(){if(S.mode=='arena'){const st=loadSt();st.arena=Math.max(st.arena||0,S.wave-1);try{localStorage.setItem(SK,JSON.stringify(st))}catch(e){}beep(150,.5,'triangle');$('overT').textContent='وصلت للموجة '+S.wave;$('overD').innerHTML='أفضل رقم ليك: الموجة '+(st.arena+1);$('over').style.display='flex';return}const win=S.over.winner==0;recordResult(win);const left0=S.units.filter(z=>z.o==0).length;beep(win?880:150,.5,'triangle');const pr=loadProf();mergeProfile(pr,S.track,!win,AI.pers.id);saveProf(pr);
  $('overT').textContent=win?'🏆 كسبت!':'💀 الخصم كسب';$('overD').innerHTML='الأدوار: '+S.turn+' | وحداتك الباقية: '+left0+' | وحدات الخصم الباقية: '+S.units.filter(z=>z.o==1).length+'<br>الخصم كان «'+AI.pers.name+'».'+(S.over.why=='limit'?' (انتهت المباراة بالأدوار)':S.over.why=='survive'?' (صمدت المدة المطلوبة)':S.over.why=='mines'?' (سيطرت على كل المناجم)':S.over.why=='hero'?' (قتلت قائد الخصم)':'')+'<br><b>اللي الخصم اتعلمه عنك:</b><br>'+describe(pr).map(l=>'• '+l).join('<br>');if(curMission>=0&&win){const c=loadCamp();c.done[curMission]=true;try{localStorage.setItem(CK,JSON.stringify(c))}catch(e){};$('overD').innerHTML+='<br>⭐ مهمة «'+MISSIONS[curMission].n+'» اتكملت'}$('over').style.display='flex'}
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function aiTurn(){busy=true;sel=null;mode=null;ui();log('دور الخصم...');await sleep(400);let guard=0;
@@ -299,7 +312,7 @@ async function aiTurn(){busy=true;sel=null;mode=null;ui();log('دور الخصم
 function undoMove(){if(!lastMove||busy||S.cur!=0)return;const u=S.units.find(z=>z.id==lastMove.id);if(u&&!u.acted&&!uAt(S,lastMove.x,lastMove.y)){u.x=lastMove.x;u.y=lastMove.y;u.moved=false;sel=u;refreshSel();log('تراجعت عن الحركة')}lastMove=null;ui()}
 function renderTech(){$('techl').innerHTML=Object.keys(TECH).map(k=>{const t=TECH[k],own=S.techs[0][k];return '<button class="tc" data-k="'+k+'"'+(own||S.gold[0]<t.cost||busy||S.cur!=0?' disabled':'')+'><b>'+t.n+'</b> '+(own?'✔':'('+t.cost+' ذهب)')+'<small>'+t.d+'</small></button>'}).join('');
  document.querySelectorAll('#techl button').forEach(b=>b.onclick=()=>{if(doTech(S,0,b.dataset.k)){log('طوّرت: '+TECH[b.dataset.k].n);renderTech();ui()}})}
-function playerEnd(){lastMove=null;if(busy||S.cur!=0||S.over)return;endTurn(S);sel=null;mode=null;if(S.over){checkOver();ui();return}ui();aiTurn()}
+function playerEnd(){lastMove=null;if(busy||S.cur!=0||S.over)return;endTurn(S);sel=null;mode=null;if(S.over){checkOver();ui();return}ui();if(afterAction())return;aiTurn()}
 cv.addEventListener('pointerdown',e=>{const r=cv.getBoundingClientRect();const x=Math.floor((e.clientX-r.left)/cell),y=Math.floor((e.clientY-r.top)/cell);if(x>=0&&y>=0&&x<W&&y<H)tap(x,H-1-y<0?0:y)});
 // flip so player at bottom: HQ y=10 is bottom already (y increases downward)
 // ===== vector sprites =====
@@ -348,7 +361,7 @@ function draw(){requestAnimationFrame(draw);if(!S||$('game').style.display=='non
  // day/night tint by turn
  const ph=(S.turn%24)/24;const night=Math.max(0,Math.sin(ph*Math.PI*2-Math.PI/2)*.5+.1);if(night>.05){c.fillStyle='rgba(10,20,60,'+(night*.35)+')';c.fillRect(0,0,cell*W,cell*H)}
  function bar(x,y,w,h,r,col){c.fillStyle='#000a';c.fillRect(x,y,w,h);c.fillStyle=col;c.fillRect(x,y,w*Math.max(0,r),h)}}
-$('tutb').onclick=()=>{$('tut').style.display='none';try{localStorage.setItem('sg_tut','1')}catch(e){}};$('mapc').onchange=()=>{mapOpt=$('mapc').value};$('fogc').onchange=()=>{fogOpt=$('fogc').checked};$('startb').onclick=()=>startGame();$('dailyb').onclick=()=>startGame(dailyCfg());$('shareb').onclick=async()=>{const l=shareLink();try{if(navigator.share){await navigator.share({title:'ساحة العقل',text:'اتحدى الخصم اللي اتدرّب على أسلوبي',url:l})}else{await navigator.clipboard.writeText(l);alert('اللينك اتنسخ، ابعته لصاحبك')}}catch(e){prompt('انسخ اللينك وابعته:',l)}};
+$('tutb').onclick=()=>{$('tut').style.display='none';try{localStorage.setItem('sg_tut','1')}catch(e){}};$('mapc').onchange=()=>{mapOpt=$('mapc').value};$('fogc').onchange=()=>{fogOpt=$('fogc').checked};$('startb').onclick=()=>startGame();$('arenab').onclick=()=>startGame({n:'ساحة البقاء',d:'',arena:true,diff:2,pers:'rush',fog:false,ag:0,mul:1});$('dailyb').onclick=()=>startGame(dailyCfg());$('shareb').onclick=async()=>{const l=shareLink();try{if(navigator.share){await navigator.share({title:'ساحة العقل',text:'اتحدى الخصم اللي اتدرّب على أسلوبي',url:l})}else{await navigator.clipboard.writeText(l);alert('اللينك اتنسخ، ابعته لصاحبك')}}catch(e){prompt('انسخ اللينك وابعته:',l)}};
 $('ghostb').onclick=()=>{const g=getGhost();if(g)startGame({n:'تحدي الشبح',d:'',diff:2,ghost:ghostPersona(g),fog:false,ag:0,mul:1})};
 $('mutb').onclick=()=>{mute=!mute;$('mutb').textContent=mute?'🔇':'🔊'};$('endb').onclick=playerEnd;$('techb').onclick=()=>{if(!S)return;renderTech();$('techp').style.display='flex'};$('techx').onclick=()=>{$('techp').style.display='none'};$('undob').onclick=undoMove;$('again').onclick=()=>{$('over').style.display='none';$('game').style.display='none';$('menu').style.display='flex';renderMenu()};
 $('resetb').onclick=()=>{if(confirm('تمسح كل اللي الخصم اتعلمه عنك؟')){localStorage.removeItem(PK);renderMenu()}};
