@@ -1,19 +1,19 @@
 <!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>ساحة العقل | لعبة استراتيجية بخصم بيتعلم</title>
 <style>*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;height:100%;background:#12161d;color:#eee;font-family:system-ui,'Segoe UI',Tahoma,sans-serif;overflow:hidden}
 #menu,#game,#over{position:fixed;inset:0;display:flex;flex-direction:column}#game{display:none}#over{display:none;background:#000c;align-items:center;justify-content:center;z-index:9}
-#menu{align-items:center;justify-content:center;gap:12px;padding:16px;overflow:auto;background:radial-gradient(circle at 50% 20%,#25314a,#12161d)}
+#menu>:first-child{margin-top:auto}#menu>:last-child{margin-bottom:auto}#menu{align-items:center;gap:12px;padding:16px;overflow:auto;background:radial-gradient(circle at 50% 20%,#25314a,#12161d)}
 h1{margin:0;font-size:30px;color:#ffd75a}h2{margin:0;font-size:15px;color:#9bd}.card{background:#1d2535;border-radius:14px;padding:12px 16px;max-width:420px;width:100%;font-size:14px;line-height:1.7}
 button{font-family:inherit;border:0;border-radius:10px;background:#2c3a55;color:#fff;font-size:15px;padding:10px 14px}button:disabled{opacity:.35}
 .big{background:#e8a317;color:#111;font-weight:700;font-size:19px;padding:12px 40px}#dbtns{display:flex;gap:6px}.d{flex:1;padding:8px 4px}.d.on{background:#e8a317;color:#111}
 #top{display:flex;justify-content:space-around;align-items:center;padding:6px;background:#1d2535;font-size:15px}#wrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0}canvas{touch-action:none}
 #ai{text-align:center;font-size:12px;background:#241a33;color:#d9b8ff;padding:3px}#log{padding:4px 8px;font-size:13px;background:#0e121a;min-height:24px;text-align:center;color:#cfe}#info{text-align:center;font-size:12px;color:#ffe14a;min-height:16px}
-#rec{display:flex;gap:4px;padding:4px;flex-wrap:nowrap}.rb{flex:1;display:flex;flex-direction:column;align-items:center;padding:4px 2px;font-size:11px;line-height:1.2}.rb span{font-size:20px}.rb small{color:#ffd75a;font-size:12px}.rb.on{background:#3a7f3a}.rb.up{background:#4a3a66}
+#rec{display:flex;gap:4px;padding:4px;flex-wrap:nowrap}.rb{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;padding:4px 2px;font-size:11px;line-height:1.2}.rb span{font-size:20px}.rb small{color:#ffd75a;font-size:12px}.rb.on{background:#3a7f3a}.rb.up{background:#4a3a66}
 #ctl{display:flex;padding:4px;gap:6px}#endb{flex:1;background:#2f8a4a;font-size:17px;font-weight:700}#menub{background:#553}
-#over .card{text-align:center}</style></head><body>
+#camp{display:flex;flex-direction:column;gap:5px;margin-top:6px}.ms{text-align:right;display:flex;flex-direction:column;font-size:14px}.ms small{color:#9ab;font-size:11px}label{font-size:14px}#over .card{text-align:center}</style></head><body>
 <div id="menu"><h1>🧠 ساحة العقل</h1><h2>حرب وإدارة ضد خصم بيتعلم أسلوبك وبيتغير كل مباراة</h2>
 <div class="card"><b>الخصم عارف عنك إيه:</b><div id="prof"></div></div>
 <div class="card"><b>الصعوبة</b><div id="dbtns"></div></div>
-<button id="startb" class="big">ابدأ المعركة</button><button id="resetb">مسح ذاكرة الخصم</button>
+<div class="card"><b>🏆 الحملة (٦ مهام)</b><div id="camp"></div></div><div class="card"><b>مباراة حرة</b><br><label><input type="checkbox" id="fogc"> ضباب الحرب (ما تشوفش بعيد)</label></div><button id="startb" class="big">ابدأ مباراة حرة</button><button id="resetb">مسح ذاكرة الخصم</button>
 <div class="card" style="font-size:12px">دمّر قلعة الخصم 🏰. جنّد وحدات من القلعة، سيطر على المناجم ⛏️ لزيادة الدخل، وطوّر الاقتصاد والتسليح.<br>المشاة 🛡️ تغلب الفرسان، الفرسان 🐎 تغلب الرماة، الرماة 🏹 تغلب المشاة. المنجنيق 💣 يدمّر القلاع من بعيد لكن هش.</div></div>
 <div id="game"><div id="top"><span>💰 <b id="gold">0</b> <small id="inc"></small></span><span>الدور <b id="turn"></b></span><span>خصم 💰 <b id="egold"></b></span><button id="mutb">🔊</button><button id="menub">☰</button></div><div id="ai"></div>
 <div id="wrap"><canvas id="cv"></canvas></div><div id="info"></div><div id="log"></div><div id="rec"></div><div id="ctl"><button id="endb">إنهاء الدور ▶</button></div></div>
@@ -24,9 +24,10 @@ const W=9,H=11;
 const T={inf:{n:'مشاة',e:'🛡️',cost:10,hp:10,atk:4,mov:2,min:1,max:1},
  arc:{n:'رماة',e:'🏹',cost:12,hp:7,atk:4,mov:2,min:1,max:2},
  cav:{n:'فرسان',e:'🐎',cost:15,hp:10,atk:5,mov:4,min:1,max:1},
- cat:{n:'منجنيق',e:'💣',cost:20,hp:6,atk:6,mov:1,min:2,max:3}};
+ cat:{n:'منجنيق',e:'💣',cost:20,hp:6,atk:6,mov:1,min:2,max:3},
+ hero:{n:'قائد',e:'👑',cost:35,hp:16,atk:6,mov:3,min:1,max:1}};
 const TYPES=['inf','arc','cav','cat'];
-const BON={inf:{inf:1,arc:1,cav:1.6,cat:1.3,hq:1},arc:{inf:1.6,arc:1,cav:1,cat:1.3,hq:.7},cav:{inf:1,arc:1.6,cav:1,cat:1.3,hq:1},cat:{inf:1.2,arc:1.2,cav:1.2,cat:1,hq:2.5}};
+const BON={inf:{inf:1,arc:1,cav:1.6,cat:1.3,hq:1,hero:1},arc:{inf:1.6,arc:1,cav:1,cat:1.3,hq:.7,hero:1},cav:{inf:1,arc:1.6,cav:1,cat:1.3,hq:1,hero:1},cat:{inf:1.2,arc:1.2,cav:1.2,cat:1,hq:2.5,hero:1.2},hero:{inf:1.2,arc:1.2,cav:1.2,cat:1.2,hq:1.2,hero:1}};
 const CAP=14, HQHP=40, TURNLIMIT=50;
 const HQPOS=[{x:4,y:10},{x:4,y:0}]; // 0 = player (bottom), 1 = AI (top)
 const MINEDEF=[[1,3,3],[7,3,3],[4,5,5],[1,7,3],[7,7,3]];
@@ -35,12 +36,13 @@ const md=(a,b,c,d)=>Math.abs(a-c)+Math.abs(b-d);
 function newGame(o){o=o||{};const seed=o.seed||(Math.random()*1e9|0);const r=mulberry(seed);
  const s={seed,turn:1,cur:0,gold:[30,30+(o.aiGold||0)],eco:[0,0],tech:[0,0],units:[],uid:1,over:null,
   hq:[{x:4,y:10,hp:HQHP},{x:4,y:0,hp:HQHP}],mines:MINEDEF.map(m=>({x:m[0],y:m[1],v:m[2],owner:-1})),obs:{},
-  income:[1,1],track:{builds:{inf:0,arc:0,cav:0,cat:0},flank:[0,0,0],fs:0,contact:null,ecoBy12:0},log:[]};
+  income:[1,1],fog:!!o.fog,forest:{},track:{builds:{inf:0,arc:0,cav:0,cat:0},flank:[0,0,0],fs:0,contact:null,ecoBy12:0},log:[]};
  if(o.aiIncomeMul)s.incMul=[1,o.aiIncomeMul]; else s.incMul=[1,1];
  const isMine=(x,y)=>s.mines.some(m=>m.x==x&&m.y==y);
  let n=0,g=0;while(n<6&&g++<200){const x=r()*W|0,y=2+(r()*3|0);if(isMine(x,y)||isMine(W-1-x,H-1-y)||s.obs[x+','+y])continue;
   s.obs[x+','+y]=1;s.obs[(W-1-x)+','+(H-1-y)]=1;n++}
- ensureOpen(s);return s}
+ ensureOpen(s);n=0;g=0;while(n<5&&g++<200){const x=r()*W|0,y=2+(r()*7|0);if(y==5||isMine(x,y)||isMine(W-1-x,H-1-y)||s.obs[x+','+y]||s.obs[(W-1-x)+','+(H-1-y)]||s.forest[x+','+y])continue;s.forest[x+','+y]=1;s.forest[(W-1-x)+','+(H-1-y)]=1;n++}
+ if(o.startGold){s.gold[0]=o.startGold[0];s.gold[1]=o.startGold[1]}return s}
 function ensureOpen(s){const free=(x,y)=>x>=0&&y>=0&&x<W&&y<H&&!s.obs[x+','+y];for(const k of Object.keys(s.obs)){/*check width of passage on each row*/}
  for(let y=2;y<=8;y++){let open=0;for(let x=0;x<W;x++)if(free(x,y))open++;if(open<5){for(const k of Object.keys(s.obs)){const [ox,oy]=k.split(',').map(Number);if(oy==y){delete s.obs[k];delete s.obs[(W-1-ox)+','+(H-1-oy)];break}}}}}
 const inb=(x,y)=>x>=0&&y>=0&&x<W&&y<H;
@@ -55,7 +57,7 @@ function reach(s,u){const R={};const key=(x,y)=>x+','+y;const q=[[u.x,u.y,0]];co
 function targetsFrom(s,u,x,y){const out=[];const t=T[u.t];
  for(const e of s.units){if(e.o==u.o)continue;const d=md(x,y,e.x,e.y);if(d>=t.min&&d<=t.max)out.push({k:'u',u:e})}
  const eo=1-u.o,h=s.hq[eo];const d=md(x,y,h.x,h.y);if(h.hp>0&&d>=t.min&&d<=t.max)out.push({k:'h',o:eo});return out}
-function dmgOf(s,a,tg){const b=BON[a.t][tg.k=='h'?'hq':tg.u.t];return Math.max(1,Math.round(T[a.t].atk*b*(1+.25*s.tech[a.o])))}
+function dmgOf(s,a,tg){const b=BON[a.t][tg.k=='h'?'hq':tg.u.t];const fm=(tg.k=='u'&&s.forest[tg.u.x+','+tg.u.y])?.72:1;return Math.max(1,Math.round(T[a.t].atk*b*(1+.25*s.tech[a.o])*fm))}
 function logm(s,m){s.log.push(m);if(s.log.length>60)s.log.shift()}
 function doMove(s,u,x,y){u.x=x;u.y=y;u.moved=true;}
 function canAct(u){return !u.acted&&!u.fresh}
@@ -68,14 +70,14 @@ function doAttack(s,u,tg){const ev=[];s.lastFight=s.turn;const d=dmgOf(s,u,tg);
  u.acted=true;u.moved=true;return ev}
 const ecoCost=l=>(l+1)*20, techCost=l=>(l+1)*25;
 function spawnTiles(s,p){const h=s.hq[p],r=[];for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++){const x=h.x+dx,y=h.y+dy;if(!inb(x,y)||(dx==0&&dy==0)||s.obs[x+','+y]||uAt(s,x,y))continue;r.push({x,y})}return r}
-function doRecruit(s,p,t,x,y){const c=T[t].cost;if(s.gold[p]<c||s.units.filter(u=>u.o==p).length>=CAP)return false;
+function doRecruit(s,p,t,x,y){const c=T[t].cost;if(t=='hero'&&s.units.some(u=>u.o==p&&u.t=='hero'))return false;if(s.gold[p]<c||s.units.filter(u=>u.o==p).length>=CAP)return false;
  if(!spawnTiles(s,p).some(q=>q.x==x&&q.y==y))return false;s.gold[p]-=c;s.units.push({id:s.uid++,t,o:p,x,y,hp:T[t].hp,moved:true,acted:true,fresh:true});
- if(p==0)s.track.builds[t]++;return true}
+ if(p==0&&t!='hero')s.track.builds[t]++;return true}
 function doUpgrade(s,p,k){if(k=='eco'){const c=ecoCost(s.eco[p]);if(s.eco[p]>=4||s.gold[p]<c)return false;s.gold[p]-=c;s.eco[p]++;if(p==0&&s.turn<=12)s.track.ecoBy12++;return true}
  const c=techCost(s.tech[p]);if(s.tech[p]>=3||s.gold[p]<c)return false;s.gold[p]-=c;s.tech[p]++;return true}
 function incomeOf(s,p){let i=6+3*s.eco[p];for(const m of s.mines)if(m.owner==p)i+=m.v;return Math.round(i*(s.incMul[p]||1))}
 function startTurn(s,p){for(const m of s.mines){const u=uAt(s,m.x,m.y);if(u&&u.o==p)m.owner=p}
- s.gold[p]+=incomeOf(s,p);for(const u of s.units)if(u.o==p){u.moved=false;u.acted=false;u.fresh=false}}
+ s.gold[p]+=incomeOf(s,p);for(const h of s.units)if(h.o==p&&h.t=='hero')for(const a of s.units)if(a.o==p&&a!==h&&md(a.x,a.y,h.x,h.y)<=1)a.hp=Math.min(T[a.t].hp,a.hp+3);for(const u of s.units)if(u.o==p){u.moved=false;u.acted=false;u.fresh=false}}
 function endTurn(s){if(s.over)return;
  if(s.cur==0){const tr=s.track;const mine=s.units.filter(u=>u.o==0);
   for(const u of mine){tr.flank[u.x<3?0:u.x<6?1:2]++;tr.fs++;if(tr.contact==null&&u.y<=4)tr.contact=s.turn}}
@@ -132,7 +134,7 @@ function aiScore(s,ctx,u,x,y,tg,start){const p=ctx.p,eo=1-p,pers=ctx.pers;let sc
  const allies=s.units.filter(a=>a.o==p&&a!==u&&md(a.x,a.y,x,y)<=2).length;
  danger=Math.min(Math.max(0,danger-allies*1.1),u.hp*.9);
  const frag=1+(1-u.hp/T[u.t].hp)*.8;let cau=pers.caution*(ctx.learn>.4&&ctx.profile.contact<9&&s.turn<9&&ctx.p==1?1.25:1);if(u.t=='cat'||u.t=='arc')cau*=1.25;
- sc-=danger*.45*cau*frag/push/push;
+ sc-=danger*.45*cau*frag/push/push;if(s.forest[x+','+y])sc+=1.4;if(u.t=='hero')sc+=danger*.15;
  for(const m of s.mines){if(m.x==x&&m.y==y){if(m.owner!=p)sc+=m.v+1.5;else sc+=.8}}
  // objective
  const myHQ=s.hq[p],eHQ=s.hq[eo];const late=Math.max(0,Math.min(1,(s.turn-pers.delay)/5+.35));
@@ -165,7 +167,7 @@ function aiStep(s,ctx){const p=ctx.p;if(s.over)return{a:'end'};
   if(!ctx.upChecked){ctx.upChecked=true;const eco=s.eco[p],tech=s.tech[p];
    if(eco<3&&gold>=ecoCost(eco)+8&&(gold>70||Math.random()<ctx.pers.econ*(s.turn<14?1:.25)*(ctx.diff==0?.4:1)*(s.turn<2?.5:1))){return{a:'upgrade',k:'eco',note:'الخصم استثمر في الاقتصاد'}}
    if(tech<3&&s.turn>5&&gold>=techCost(tech)+10&&(gold>60||Math.random()<.3*(ctx.diff==0?.3:1))){return{a:'upgrade',k:'tech',note:'الخصم طوّر التسليح'}}}
-  if(mine.length<CAP&&spawnTiles(s,p).length){let t=buildType(s,ctx);if(gold<T[t].cost){const aff=TYPES.filter(q=>T[q].cost<=gold);if(aff.length&&Math.random()<.6)t=aff[Math.random()*aff.length|0];else t=null}
+  if(mine.length<CAP&&spawnTiles(s,p).length){if(s.turn>=3&&gold>=35&&!mine.some(u=>u.t=='hero')&&Math.random()<.55){const tl=spawnChoice(s,ctx,'inf');if(tl)return{a:'recruit',t:'hero',x:tl.x,y:tl.y,note:'الخصم نزّل قائده للميدان'}}let t=buildType(s,ctx);if(gold<T[t].cost){const aff=TYPES.filter(q=>T[q].cost<=gold);if(aff.length&&Math.random()<.6)t=aff[Math.random()*aff.length|0];else t=null}
    if(t){const tl=spawnChoice(s,ctx,t);if(tl){let note='';if(p==1&&ctx.learn>.4&&s.turn>1){const sh=predShares(s,ctx);const top=TYPES.slice().sort((a,b)=>sh[b]-sh[a])[0];const cnt={inf:'المشاة',arc:'الرماة',cav:'الفرسان',cat:'المنجنيق'};
       const ctr={inf:'arc',arc:'cav',cav:'inf',cat:'cav'}[top];if(t==ctr&&ctx.lastNote!=top){ctx.lastNote=top;note='الخصم لاحظ إنك بتعتمد على '+cnt[top]+' وبدأ يجهّز المضاد'}}
       return{a:'recruit',t,x:tl.x,y:tl.y,note}}}}
@@ -198,35 +200,48 @@ function beep(f,d,tp){if(mute)return;try{AC=AC||new (window.AudioContext||window
 
 function loadProf(){try{const p=JSON.parse(localStorage.getItem(PK));if(p&&p.comp)return p}catch(e){}return defProfile()}
 function saveProf(p){try{localStorage.setItem(PK,JSON.stringify(p))}catch(e){}}
-const DN=['سهل','عادي','صعب','أسطوري'];
-function renderMenu(){const pr=loadProf();$('prof').innerHTML=describe(pr).map(l=>'<div>• '+l+'</div>').join('');
+const RECR=TYPES.concat(['hero']);const DN=['سهل','عادي','صعب','أسطوري'];
+function renderCamp(){const c=loadCamp();$('camp').innerHTML=MISSIONS.map((m,i)=>{const open=i==0||c.done[i-1];return '<button class="ms" data-m="'+i+'"'+(open?'':' disabled')+'>'+(c.done[i]?'⭐':open?'▶️':'🔒')+' '+(i+1)+'. '+m.n+'<small>'+m.d+'</small></button>'}).join('');
+ document.querySelectorAll('#camp button').forEach(b=>b.onclick=()=>startGame(MISSIONS[+b.dataset.m]))}
+function renderMenu(){renderCamp();$('fogc').checked=fogOpt;const pr=loadProf();$('prof').innerHTML=describe(pr).map(l=>'<div>• '+l+'</div>').join('');
  $('dbtns').innerHTML=DN.map((n,i)=>'<button class="d'+(i==diff?' on':'')+'" data-d="'+i+'">'+n+'</button>').join('');
  document.querySelectorAll('#dbtns button').forEach(b=>b.onclick=()=>{diff=+b.dataset.d;renderMenu()})}
-function startGame(){const pr=loadProf();S=newGame({aiIncomeMul:[.85,1,1.1,1.25][diff]});AI=makeAI(S,1,pr,diff);startTurn(S,0);sel=null;mode=null;busy=false;floats=[];aiNotes=[];
+const CK='sg_camp_v1';function loadCamp(){try{return JSON.parse(localStorage.getItem(CK))||{done:[]}}catch(e){return{done:[]}}}
+const MISSIONS=[
+ {n:'أول حملة',d:'خصم مبتدئ متحصّن. اتعلّم الأساسيات.',diff:0,pers:'turtle',fog:false,ag:0,mul:.85},
+ {n:'كمين الصحراء',d:'خصم هجّام بدري. اصمد ثم اضرب.',diff:1,pers:'rush',fog:false,ag:0,mul:1},
+ {n:'ضباب النيل',d:'ضباب حرب: ما تشوفش إلا اللي حواليك.',diff:1,pers:'trick',fog:true,ag:0,mul:1},
+ {n:'الحصن',d:'متحصّن بذهب زيادة. هتحتاج منجنيق.',diff:2,pers:'turtle',fog:false,ag:15,mul:1},
+ {n:'إمبراطور الاقتصاد',d:'اقتصادي بضباب. كل ما تأخرت قوي أكتر.',diff:2,pers:'boom',fog:true,ag:10,mul:1.1},
+ {n:'ملك العقل',d:'أصعب خصم: بيتعلم، بضباب، بدخل أعلى.',diff:3,pers:null,fog:true,ag:20,mul:1.25}];
+let curMission=-1,fogOpt=false;
+function startGame(m){const pr=loadProf();const mm=(m&&typeof m=='object'&&m.n)?m:null;curMission=mm?MISSIONS.indexOf(mm):-1;const dd=mm?mm.diff:diff;const fg=mm?mm.fog:fogOpt;
+ S=newGame({fog:fg,aiGold:mm?mm.ag:0,aiIncomeMul:mm?mm.mul:[.85,1,1.1,1.25][diff]});AI=makeAI(S,1,pr,dd,mm&&mm.pers||null);startTurn(S,0);sel=null;mode=null;busy=false;floats=[];aiNotes=[];
  $('menu').style.display='none';$('over').style.display='none';$('game').style.display='flex';
- log('الخصم اختار شخصية «'+AI.pers.name+'». '+(diff>0&&pr.n>0?'وهو مراجع أسلوبك من المباريات اللي فاتت.':'ده أول لقاء بينكم.'));
+ log((mm?'مهمة «'+mm.n+'»: ':'')+'الخصم اختار شخصية «'+AI.pers.name+'». '+(dd>0&&pr.n>0?'وهو مراجع أسلوبك من المباريات اللي فاتت.':'ده أول لقاء بينكم.'));
  resize();ui()}
 function log(m){$('log').textContent=m}
 function resize(){const w=$('wrap').clientWidth,h=$('wrap').clientHeight,d=window.devicePixelRatio||1;cell=Math.floor(Math.min(w/W,h/H));
  cv.style.width=cell*W+'px';cv.style.height=cell*H+'px';cv.width=cell*W*d;cv.height=cell*H*d;cx.setTransform(d,0,0,d,0,0)}
 window.addEventListener('resize',()=>{if(S)resize()});
 function ui(){if(!S)return;const p=0;$('gold').textContent=S.gold[0];$('turn').textContent=S.turn+'/'+TURNLIMIT;$('inc').textContent='+'+incomeOf(S,0);$('egold').textContent=S.gold[1];
- $('rec').innerHTML=TYPES.map(t=>'<button class="rb'+(mode==t?' on':'')+'" data-t="'+t+'"'+(S.gold[0]<T[t].cost||S.cur!=0||busy?' disabled':'')+'><span>'+T[t].e+'</span>'+T[t].n+'<small>'+T[t].cost+'</small></button>').join('')+
+ $('rec').innerHTML=RECR.map(t=>'<button class="rb'+(mode==t?' on':'')+'" data-t="'+t+'"'+(S.gold[0]<T[t].cost||S.cur!=0||busy||(t=='hero'&&S.units.some(z=>z.o==0&&z.t=='hero'))?' disabled':'')+'><span>'+T[t].e+'</span>'+T[t].n+'<small>'+T[t].cost+'</small></button>').join('')+
  '<button class="rb up" data-u="eco"'+(S.eco[0]>=4||S.gold[0]<ecoCost(S.eco[0])||busy?' disabled':'')+'><span>💰</span>اقتصاد '+S.eco[0]+'<small>'+(S.eco[0]>=4?'أقصى':ecoCost(S.eco[0]))+'</small></button>'+
  '<button class="rb up" data-u="tech"'+(S.tech[0]>=3||S.gold[0]<techCost(S.tech[0])||busy?' disabled':'')+'><span>⚔️</span>تسليح '+S.tech[0]+'<small>'+(S.tech[0]>=3?'أقصى':techCost(S.tech[0]))+'</small></button>';
  document.querySelectorAll('#rec button').forEach(b=>b.onclick=()=>{if(busy||S.cur!=0)return;if(b.dataset.t){mode=mode==b.dataset.t?null:b.dataset.t;sel=null;if(mode)log('اختار مكان جنب القلعة لتجنيد '+T[mode].n)}else{if(doUpgrade(S,0,b.dataset.u))log('تم التطوير');}ui()});
  $('endb').disabled=busy||S.cur!=0;
  const sh=predShares(S,AI);const top=TYPES.slice().sort((a,b)=>sh[b]-sh[a])[0];$('ai').textContent='🧠 '+AI.pers.name+' | الخصم شايفك بتعتمد على: '+T[top].n+' ('+Math.round(sh[top]*100)+'%)';
  const hint=sel?('✔ '+T[sel.t].n+' ❤️'+sel.hp+'/'+T[sel.t].hp):'';$('info').textContent=hint}
+function vis(x,y){if(!S||!S.fog)return true;for(const u of S.units)if(u.o==0&&md(u.x,u.y,x,y)<=3)return true;if(md(S.hq[0].x,S.hq[0].y,x,y)<=3)return true;for(const m of S.mines)if(m.owner==0&&md(m.x,m.y,x,y)<=2)return true;return false}
 function selectUnit(u){sel=u;mode=null;refreshSel()}
 function refreshSel(){if(!sel){reachM={};tgts=[];return}reachM=(sel.moved)?{}:reach(S,sel);
- if(sel.acted||sel.fresh){reachM={};tgts=[]}else{tgts=targetsFrom(S,sel,sel.x,sel.y)}}
+ if(sel.acted||sel.fresh){reachM={};tgts=[]}else{tgts=targetsFrom(S,sel,sel.x,sel.y).filter(q=>q.k=='h'?vis(S.hq[q.o].x,S.hq[q.o].y):vis(q.u.x,q.u.y))}}
 function tap(x,y){if(!S||busy||S.cur!=0||S.over)return;
  if(mode){if(spawnTiles(S,0).some(q=>q.x==x&&q.y==y)){if(doRecruit(S,0,mode,x,y)){beep(520,.08);log('جنّدت '+T[mode].n);if(S.gold[0]<T[mode].cost)mode=null}}else mode=null;ui();return}
  const u=uAt(S,x,y);
  if(sel){
   const k=x+','+y;
-  if(u&&u.o==1||(isHQ(S,x,y)&&S.hq[1].x==x&&S.hq[1].y==y)){
+  if(u&&u.o==1&&vis(x,y)||(isHQ(S,x,y)&&S.hq[1].x==x&&S.hq[1].y==y)){
    const tg=u&&u.o==1?{k:'u',u}:{k:'h',o:1};
    let ok=tgts.some(q=>q.k==tg.k&&(tg.k=='h'||q.u===tg.u));
    if(!ok&&!sel.moved&&sel.t!='cat'&&!sel.acted&&!sel.fresh){let bk=null,bc=99;for(const kk in reachM){const [rx,ry]=kk.split(',').map(Number);if(targetsFrom(S,sel,rx,ry).some(q=>q.k==tg.k&&(tg.k=='h'||q.u===tg.u))&&reachM[kk]<bc){bc=reachM[kk];bk=[rx,ry]}}
@@ -240,7 +255,7 @@ function tap(x,y){if(!S||busy||S.cur!=0||S.over)return;
 function addFloats(ev){for(const e of ev){floats.push({x:e.x,y:e.y,t:e.t,a:0});beep(e.t=='💀'?120:260,.12,'sawtooth')}}
 function checkOver(){if(S.over){showOver()}}
 function showOver(){const win=S.over.winner==0;beep(win?880:150,.5,'triangle');const pr=loadProf();mergeProfile(pr,S.track,!win,AI.pers.id);saveProf(pr);
- $('overT').textContent=win?'🏆 كسبت!':'💀 الخصم كسب';$('overD').innerHTML='الخصم كان «'+AI.pers.name+'».'+(S.over.why=='limit'?' (انتهت المباراة بالأدوار)':'')+'<br><b>اللي الخصم اتعلمه عنك:</b><br>'+describe(pr).map(l=>'• '+l).join('<br>');$('over').style.display='flex'}
+ $('overT').textContent=win?'🏆 كسبت!':'💀 الخصم كسب';$('overD').innerHTML='الخصم كان «'+AI.pers.name+'».'+(S.over.why=='limit'?' (انتهت المباراة بالأدوار)':'')+'<br><b>اللي الخصم اتعلمه عنك:</b><br>'+describe(pr).map(l=>'• '+l).join('<br>');if(curMission>=0&&win){const c=loadCamp();c.done[curMission]=true;try{localStorage.setItem(CK,JSON.stringify(c))}catch(e){};$('overD').innerHTML+='<br>⭐ مهمة «'+MISSIONS[curMission].n+'» اتكملت'}$('over').style.display='flex'}
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function aiTurn(){busy=true;sel=null;mode=null;ui();log('دور الخصم...');await sleep(400);let guard=0;
  while(S.cur==1&&!S.over&&guard++<200){const act=aiStep(S,AI);if(act.a=='end')break;if(act.a=='skip')continue;
@@ -253,20 +268,22 @@ cv.addEventListener('pointerdown',e=>{const r=cv.getBoundingClientRect();const x
 // flip so player at bottom: HQ y=10 is bottom already (y increases downward)
 function draw(){requestAnimationFrame(draw);if(!S||$('game').style.display=='none')return;const c=cx;c.clearRect(0,0,cell*W,cell*H);
  for(let x=0;x<W;x++)for(let y=0;y<H;y++){c.fillStyle=(x+y)%2?'#3f7d46':'#478a4e';if(y==5)c.fillStyle=(x+y)%2?'#8a7f4a':'#948a52';c.fillRect(x*cell,y*cell,cell,cell);
+  if(S.forest[x+','+y]){c.fillStyle='rgba(10,60,20,.55)';c.fillRect(x*cell,y*cell,cell,cell);c.font=cell*.55+'px serif';c.textAlign='center';c.textBaseline='middle';c.fillStyle='#fff';c.fillText('🌲',x*cell+cell/2,y*cell+cell/2)}
   if(S.obs[x+','+y]){c.font=cell*.7+'px serif';c.textAlign='center';c.textBaseline='middle';c.fillText('⛰️',x*cell+cell/2,y*cell+cell/2+2)}}
  for(const m of S.mines){const cxm=m.x*cell+cell/2,cym=m.y*cell+cell/2;c.strokeStyle=m.owner==0?'#4aa3ff':m.owner==1?'#ff5a5a':'#e8d36a';c.lineWidth=3;c.beginPath();c.arc(cxm,cym,cell*.42,0,7);c.stroke();c.font=cell*.45+'px serif';c.textAlign='center';c.textBaseline='middle';c.fillStyle='#fff';c.fillText('⛏️',cxm,cym)}
  for(const k in reachM){const [x,y]=k.split(',').map(Number);c.fillStyle='rgba(80,160,255,.38)';c.fillRect(x*cell+1,y*cell+1,cell-2,cell-2)}
  if(mode)for(const q of spawnTiles(S,0)){c.fillStyle='rgba(120,255,120,.45)';c.fillRect(q.x*cell+1,q.y*cell+1,cell-2,cell-2)}
  for(let o=0;o<2;o++){const h=S.hq[o];c.font=cell*.8+'px serif';c.textAlign='center';c.textBaseline='middle';c.fillStyle='#fff';c.fillText('🏰',h.x*cell+cell/2,h.y*cell+cell/2);bar(h.x*cell,h.y*cell+cell-6,cell,5,h.hp/HQHP,o==0?'#4aa3ff':'#ff5a5a');c.strokeStyle=o==0?'#4aa3ff':'#ff5a5a';c.lineWidth=3;c.strokeRect(h.x*cell+2,h.y*cell+2,cell-4,cell-4)}
- for(const u of S.units){u.dx=u.dx===undefined?u.x:u.dx+(u.x-u.dx)*.3;u.dy=u.dy===undefined?u.y:u.dy+(u.y-u.dy)*.3;const px=u.dx*cell+cell/2,py=u.dy*cell+cell/2;
+ for(const u of S.units){if(u.o==1&&!vis(u.x,u.y)){u.dx=u.x;u.dy=u.y;continue}u.dx=u.dx===undefined?u.x:u.dx+(u.x-u.dx)*.3;u.dy=u.dy===undefined?u.y:u.dy+(u.y-u.dy)*.3;const px=u.dx*cell+cell/2,py=u.dy*cell+cell/2;
   c.beginPath();c.fillStyle=u.o==0?'#1d5fa8':'#a82020';c.globalAlpha=(u.o==0&&(u.acted||u.fresh))?.55:1;c.arc(px,py,cell*.38,0,7);c.fill();
   if(sel===u){c.strokeStyle='#ffe14a';c.lineWidth=3;c.stroke()}c.globalAlpha=(u.o==0&&(u.acted||u.fresh))?.6:1;
   c.font=cell*.5+'px serif';c.textAlign='center';c.textBaseline='middle';c.fillStyle='#fff';c.fillText(T[u.t].e,px,py+1);c.globalAlpha=1;bar(px-cell*.36,py+cell*.3,cell*.72,4,u.hp/T[u.t].hp,'#6f6')}
  for(const t of tgts){const px=(t.k=='u'?t.u.x:S.hq[t.o].x)*cell,py=(t.k=='u'?t.u.y:S.hq[t.o].y)*cell;c.strokeStyle='#ff3030';c.lineWidth=3;c.strokeRect(px+2,py+2,cell-4,cell-4)}
- for(const f of floats){f.a++;c.globalAlpha=Math.max(0,1-f.a/50);c.font='bold '+cell*.45+'px sans-serif';c.fillStyle=f.t=='💀'?'#fff':'#ff4';c.textAlign='center';c.fillText(f.t,f.x*cell+cell/2,f.y*cell+cell*.4-f.a*.6);c.globalAlpha=1}
+ for(let x=0;x<W;x++)for(let y=0;y<H;y++)if(!vis(x,y)){c.fillStyle='rgba(8,12,20,.72)';c.fillRect(x*cell,y*cell,cell,cell)}
+ for(const f of floats){f.a++;if(!vis(f.x,f.y))continue;c.globalAlpha=Math.max(0,1-f.a/50);c.font='bold '+cell*.45+'px sans-serif';c.fillStyle=f.t=='💀'?'#fff':'#ff4';c.textAlign='center';c.fillText(f.t,f.x*cell+cell/2,f.y*cell+cell*.4-f.a*.6);c.globalAlpha=1}
  floats=floats.filter(f=>f.a<50);
  function bar(x,y,w,h,r,col){c.fillStyle='#000a';c.fillRect(x,y,w,h);c.fillStyle=col;c.fillRect(x,y,w*Math.max(0,r),h)}}
-$('mutb').onclick=()=>{mute=!mute;$('mutb').textContent=mute?'🔇':'🔊'};$('startb').onclick=startGame;$('endb').onclick=playerEnd;$('again').onclick=()=>{$('over').style.display='none';$('game').style.display='none';$('menu').style.display='flex';renderMenu()};
+$('fogc').onchange=()=>{fogOpt=$('fogc').checked};$('startb').onclick=()=>startGame();$('mutb').onclick=()=>{mute=!mute;$('mutb').textContent=mute?'🔇':'🔊'};$('endb').onclick=playerEnd;$('again').onclick=()=>{$('over').style.display='none';$('game').style.display='none';$('menu').style.display='flex';renderMenu()};
 $('resetb').onclick=()=>{if(confirm('تمسح كل اللي الخصم اتعلمه عنك؟')){localStorage.removeItem(PK);renderMenu()}};
 $('menub').onclick=()=>{if(confirm('ترجع للقايمة؟ المباراة دي هتتلغي.')){S=null;$('game').style.display='none';$('menu').style.display='flex';renderMenu()}};
 renderMenu();draw();
