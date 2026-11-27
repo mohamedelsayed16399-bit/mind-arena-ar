@@ -83,6 +83,9 @@ function swapSides(s){const fx=x=>W-1-x,fy=y=>H-1-y;s.units.forEach(u=>{u.o=1-u.
  s.hq.forEach(h=>{h.x=fx(h.x);h.y=fy(h.y)});s.mines.forEach(m=>{m.x=fx(m.x);m.y=fy(m.y);if(m.owner>=0)m.owner=1-m.owner});
  for(const k of ['obs','river','forest']){const o={};for(const key in s[k]){const p=key.split(',');o[fx(+p[0])+','+fy(+p[1])]=s[k][key]}s[k]=o}
  s.fx=[];s.cur=1-s.cur;s.sw=(s.sw||0)^1;s.fog=false}
+function aiAbilPass(s,p){let n=0;for(const u of s.units.filter(z=>z.o==p)){if(!abilReady(u)||s.over)continue;const en=s.units.filter(z=>z.o!=p);const dm=z=>md(u.x,u.y,z.x,z.y);let go=false;
+ if(u.t=='arc')go=en.some(z=>dm(z)<=2);else if(u.t=='ele')go=en.some(z=>dm(z)==1);else if(u.t=='cat')go=en.some(z=>dm(z)>=2&&dm(z)<=3);else if(u.t=='inf')go=u.hp<=5;
+ if(go&&doAbil(s,u))n++}return n}
 function canAct(u){return !u.acted&&!u.fresh}
 function doAttack(s,u,tg){const ev=[];s.lastFight=s.turn;const d=dmgOf(s,u,tg);
  if(u.o==0&&s.track.contact==null)s.track.contact=s.turn;
@@ -241,7 +244,7 @@ function applyAct(s,act){const ev=[];
   if(tg&&targetsFrom(s,u,u.x,u.y).some(q=>q.k==tg.k&&(tg.k=='h'?q.o==tg.o:q.u===tg.u)))return doAttack(s,u,tg)}}
  return ev}
 // ==/ENGINE==
-if(typeof module!=="undefined")module.exports={rankOf,doShout,shoutReady,spawnWave,waveCleared,PERKS,TECH,doTech,costOf,ghostPersona,mulberry,newGame,swapSides,makeAI,aiStep,applyAct,endTurn,startTurn,defProfile,mergeProfile,describe,PERS,T,TYPES,aiScore,reach,targetsFrom};
+if(typeof module!=="undefined")module.exports={rankOf,doShout,shoutReady,spawnWave,waveCleared,PERKS,TECH,doTech,costOf,ghostPersona,mulberry,newGame,swapSides,aiAbilPass,doAbil,makeAI,aiStep,applyAct,endTurn,startTurn,defProfile,mergeProfile,describe,PERS,T,TYPES,aiScore,reach,targetsFrom};
 // ===== UI =====
 const $=id=>document.getElementById(id);
 const cv=$('cv'),cx=cv.getContext('2d');
@@ -470,7 +473,7 @@ function setMusic(on){musicOn=on;try{localStorage.setItem('sg_music',on?'1':'0')
 const TAUNT={rush:{w:['لسه بدري عليك تفرح!','هجومي لسه ما بدأش.'],l:['إنت قوي بس ده مش آخر الكلام!','هتندم على ده!'],e:['يلا بينا، أنا مش بحب الانتظار.']},turtle:{w:['أسوارنا مش هتقع بسهولة.','صبرك هيخلص قبل أسواري.'],l:['حتى الحصن بيتهز... ثواني.','بتتعلم بسرعة، لازم أحترس.'],e:['الصبر مفتاح الفرج.']},boom:{w:['الذهب بيشتغل لحسابي.','اقتصادي هيدفنك.'],l:['خسرت جولة مش الحرب.','هسترجعها بالفلوس.'],e:['الوقت في صالحي.']},trick:{w:['كنت شايف ده جاي من بدري.','وقعت في فخي.'],l:['ده كان جزء من الخطة.','هه، حاجة متوقعة.'],e:['مش هتعرف أنا ناوي على إيه.']},sniper:{w:['سهمي ما بيغلطش.','من بعيد أحسن.'],l:['كنت محتاج مدى أكتر.','قربت مني أوي.'],e:['ابقى بعيد عن مداي.']},wolf:{w:['الذئب ما بيرحمش.','اتلفيت حواليك!'],l:['جريت بسرعة بس مش كفاية.','الفريسة هربت.'],e:['شمّيت ريحتك.']},siege:{w:['الأسوار هتقع.','منجنيقي ما بيغلطش.'],l:['منجنيقي اتدمّر؟!','الحصار فشل.'],e:['هحاصرك لحد ما تستسلم.']},titan:{w:['الفيلة ما بتقفش.','الأرض بتهتز تحتك!'],l:['فيلتي وقعت؟!','الحجم مش كل حاجة.'],e:['فيلتي جاية في الطريق.']},ghost:{w:['أنا بلعب زيك بالظبط!','شايف نفسك فيا؟'],l:['بتضرب نفسك دلوقتي.','أنا نسخة منك، قوي صح؟'],e:['بتلعب ضد نفسك.']}};
 let tauntT=0,lastTaunt=-9;function taunt(force){if(!S||S.over||S.mode=='arena'||!AI)return;if(!force&&(S.turn-lastTaunt<3||Math.random()>.45))return;const id=AI.pers.id;const set=TAUNT[id]||TAUNT.rush;const my=S.units.filter(z=>z.o==0).reduce((a,z)=>a+z.hp,0)+S.hq[0].hp,th=S.units.filter(z=>z.o==1).reduce((a,z)=>a+z.hp,0)+S.hq[1].hp;const k=my>th*1.25?'l':th>my*1.25?'w':'e';const a=set[k];const el=$('taunt');el.textContent=AI.pers.name+': '+a[Math.random()*a.length|0];el.style.opacity=1;lastTaunt=S.turn;clearTimeout(tauntT);tauntT=setTimeout(()=>{el.style.opacity=0},3800)}
 let SPD=+(localStorage.getItem('sg_spd')||1);const SPDN={1:'⏩ ×1',.5:'⏩ ×2',.1:'⏩ ×5'};
-async function aiTurn(){busy=true;sel=null;mode=null;ui();log('دور الخصم...');await sleep(400*SPD);let guard=0;
+async function aiTurn(){busy=true;sel=null;mode=null;ui();log('دور الخصم...');await sleep(400*SPD);let guard=0;try{if(!(curCfg&&curCfg.train)&&aiAbilPass(S,1)){ui();await sleep(300*SPD)}}catch(e){}
  while(S.cur==1&&!S.over&&guard++<200){const act=aiStep(S,AI);if(act.a=='end')break;
   if(act.note&&aiNotes.indexOf(act.note)<0){aiNotes.push(act.note);log('AI | '+act.note)}
   if(act.a=='skip'){await sleep(act.note?900*SPD:0);continue}
